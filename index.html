@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Weather Forecast - ZIP 61554</title>
+    <title>Weather Forecast - Pekin 61554</title>
     <style>
       :root {
         color-scheme: dark;
@@ -283,8 +283,7 @@
     <main class="page">
       <header class="topbar">
         <div>
-          <h1>Weather Forecast - Alto Ingredients - Pekin</h1>
-          <p class="subtitle">ZIP 61554 - National Weather Service plus extended outlook</p>
+          <h1>Weather Forecast - Pekin 61554</h1>
         </div>
         <div class="actions">
           <button id="refresh-button" type="button">Refresh Now</button>
@@ -639,7 +638,7 @@
 
         const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
         els.lastUpdated.textContent = `Last updated: ${time}`;
-        setStatus("Current and hourly forecast from National Weather Service. 10-day high/low from Open-Meteo extended outlook.");
+        setStatus("");
         els.refresh.disabled = false;
       }
 
