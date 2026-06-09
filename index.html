@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weather Forecast - ZIP 61554</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #070d0b;
+        --panel: rgba(13, 22, 18, 0.94);
+        --panel-soft: #111f1a;
+        --ink: #edf6f1;
+        --muted: #9fb3aa;
+        --line: #284138;
+        --green: #2f8f63;
+        --green-dark: #1c5f43;
+        --green-soft: #173328;
+        --warn: #ff938b;
+        --shadow: 0 18px 45px rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          linear-gradient(180deg, rgba(7, 13, 11, 0.78), rgba(7, 13, 11, 0.98)),
+          url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80") center/cover fixed;
+        color: var(--ink);
+      }
+
+      .page {
+        width: min(1880px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 10px 0 14px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: start;
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.7rem, 2.1vw, 2.7rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        text-align: right;
+      }
+
+      button {
+        min-height: 38px;
+        padding: 0 15px;
+        border: 1px solid #b8c7d1;
+        border-radius: 8px;
+        background: #13231d;
+        color: var(--ink);
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+      }
+
+      button:hover {
+        border-color: var(--green);
+        color: #b8f2d0;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid rgba(40, 65, 56, 0.96);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .current {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(120px, 1fr));
+        gap: 10px;
+        padding: 9px;
+        margin-bottom: 8px;
+      }
+
+      .metric {
+        min-height: 56px;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-soft);
+      }
+
+      .metric span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 2px;
+        font-size: clamp(1.1rem, 1.5vw, 1.75rem);
+        line-height: 1.05;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(720px, 1.55fr) minmax(520px, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .panel {
+        padding: 9px;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.15rem;
+        letter-spacing: 0;
+      }
+
+      .panel-header span {
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 750;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #0d1612;
+      }
+
+      th,
+      td {
+        padding: 4px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        white-space: nowrap;
+        font-size: 0.84rem;
+      }
+
+      th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--green-soft);
+        color: #dff8eb;
+        font-size: 0.74rem;
+        text-transform: uppercase;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tbody tr:nth-child(even) td {
+        background: rgba(23, 51, 40, 0.45);
+      }
+
+      tbody tr.current-row td {
+        background: var(--green-dark);
+        color: #ffffff;
+        font-weight: 800;
+      }
+
+      .forecast-cell {
+        white-space: normal;
+        min-width: 170px;
+      }
+
+      .side {
+        display: grid;
+        gap: 12px;
+      }
+
+      .chart-wrap {
+        height: 310px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #0d1612;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .status {
+        min-height: 22px;
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .error {
+        color: var(--warn);
+      }
+
+      @media (max-width: 1260px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .current {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          width: min(100% - 14px, 1880px);
+          padding-top: 8px;
+        }
+
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          justify-content: flex-start;
+          text-align: left;
+        }
+
+        .current {
+          grid-template-columns: 1fr;
+        }
+
+        .panel {
+          padding: 9px;
+          overflow-x: auto;
+        }
+
+        th,
+        td {
+          padding: 6px 8px;
+          font-size: 0.84rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div>
+          <h1>Weather Forecast - Alto Ingredients - Pekin</h1>
+          <p class="subtitle">ZIP 61554 - National Weather Service plus extended outlook</p>
+        </div>
+        <div class="actions">
+          <button id="refresh-button" type="button">Refresh Now</button>
+          <div>
+            <div>Auto-refresh every 5 minutes</div>
+            <div id="last-updated">Last updated: --</div>
+          </div>
+        </div>
+      </header>
+
+      <section class="current card" aria-label="Current Weather">
+        <div class="metric">
+          <span>Current</span>
+          <strong id="current-condition">Loading...</strong>
+        </div>
+        <div class="metric">
+          <span>Temp</span>
+          <strong id="current-temp">--&deg;F</strong>
+        </div>
+        <div class="metric">
+          <span>Feels Like</span>
+          <strong id="current-feels">--&deg;F</strong>
+        </div>
+        <div class="metric">
+          <span>Humidity</span>
+          <strong id="current-humidity">--%</strong>
+        </div>
+        <div class="metric">
+          <span>Wind</span>
+          <strong id="current-wind">-- mph</strong>
+        </div>
+      </section>
+
+      <section class="layout">
+        <section class="panel card" aria-labelledby="hourly-title">
+          <div class="panel-header">
+            <h2 id="hourly-title">Next 24 Hours</h2>
+            <span>Hourly forecast</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Temp</th>
+                <th>Feels Like</th>
+                <th>Rain Chance</th>
+                <th>Wind</th>
+                <th>Forecast</th>
+              </tr>
+            </thead>
+            <tbody id="hourly-body">
+              <tr><td colspan="6">Loading hourly forecast...</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="side">
+          <section class="panel card" aria-labelledby="daily-title">
+            <div class="panel-header">
+              <h2 id="daily-title">Next 10 Days High / Low</h2>
+              <span>Daily outlook</span>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>High</th>
+                  <th>Low</th>
+                  <th>Forecast</th>
+                </tr>
+              </thead>
+              <tbody id="daily-body">
+                <tr><td colspan="4">Loading daily forecast...</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="panel card" aria-labelledby="graph-title">
+            <div class="panel-header">
+              <h2 id="graph-title">Graph</h2>
+              <span>Next 24 hours temp</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="temp-chart" width="760" height="340" aria-label="Temperature line graph"></canvas>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <p id="status" class="status" role="status"></p>
+    </main>
+
+    <script>
+      const PEKIN = {
+        latitude: 40.5675,
+        longitude: -89.6407,
+      };
+
+      const els = {
+        refresh: document.querySelector("#refresh-button"),
+        lastUpdated: document.querySelector("#last-updated"),
+        currentCondition: document.querySelector("#current-condition"),
+        currentTemp: document.querySelector("#current-temp"),
+        currentFeels: document.querySelector("#current-feels"),
+        currentHumidity: document.querySelector("#current-humidity"),
+        currentWind: document.querySelector("#current-wind"),
+        hourlyBody: document.querySelector("#hourly-body"),
+        dailyBody: document.querySelector("#daily-body"),
+        chart: document.querySelector("#temp-chart"),
+        status: document.querySelector("#status"),
+      };
+
+      const formatters = {
+        hour: new Intl.DateTimeFormat("en-US", { weekday: "short", hour: "numeric", hour12: true }),
+        day: new Intl.DateTimeFormat("en-US", { weekday: "short", month: "2-digit", day: "2-digit" }),
+      };
+
+      function round(value) {
+        return Math.round(Number(value));
+      }
+
+      function cToF(value) {
+        return round((Number(value) * 9) / 5 + 32);
+      }
+
+      function kmhToMph(value) {
+        return round(Number(value) * 0.621371);
+      }
+
+      function formatHour(value) {
+        return formatters.hour.format(new Date(value)).replace(",", "");
+      }
+
+      function formatDay(value) {
+        return formatters.day.format(new Date(`${value}T12:00:00`)).replace(",", "");
+      }
+
+      function setStatus(message, isError = false) {
+        els.status.textContent = message;
+        els.status.classList.toggle("error", isError);
+      }
+
+      function openMeteoDescription(code) {
+        const descriptions = {
+          0: "Clear sky",
+          1: "Mainly clear",
+          2: "Partly cloudy",
+          3: "Overcast",
+          45: "Fog",
+          48: "Rime fog",
+          51: "Light drizzle",
+          53: "Drizzle",
+          55: "Dense drizzle",
+          61: "Slight rain",
+          63: "Rain",
+          65: "Heavy rain",
+          71: "Slight snow",
+          73: "Snow",
+          75: "Heavy snow",
+          80: "Rain showers",
+          81: "Rain showers",
+          82: "Heavy showers",
+          95: "Thunderstorm",
+          96: "Thunderstorm",
+          99: "Thunderstorm",
+        };
+        return descriptions[code] || "Mixed weather";
+      }
+
+      async function getJson(url, options = {}) {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Weather service did not respond: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      function normalizeNwsHourly(periods) {
+        return periods.slice(0, 24).map((period) => ({
+          time: period.startTime,
+          temp: period.temperature,
+          feels: period.temperature,
+          rain: round(period.probabilityOfPrecipitation?.value ?? 0),
+          wind: period.windSpeed || "--",
+          forecast: period.shortForecast,
+        }));
+      }
+
+      function normalizeOpenMeteoDaily(daily) {
+        return daily.time.slice(0, 10).map((time, index) => ({
+          date: formatDay(time),
+          high: round(daily.temperature_2m_max[index]),
+          low: round(daily.temperature_2m_min[index]),
+          forecast: openMeteoDescription(daily.weather_code[index]),
+        }));
+      }
+
+      function renderCurrent(current, fallbackHour) {
+        const tempC = current?.temperature?.value;
+        const humidity = current?.relativeHumidity?.value;
+        const heatIndex = current?.heatIndex?.value;
+        const windChill = current?.windChill?.value;
+        const windSpeed = current?.windSpeed?.value;
+        const temp = Number.isFinite(tempC) ? cToF(tempC) : fallbackHour.temp;
+        const feels = Number.isFinite(heatIndex)
+          ? cToF(heatIndex)
+          : Number.isFinite(windChill)
+            ? cToF(windChill)
+            : temp;
+        const wind = Number.isFinite(windSpeed) ? `${kmhToMph(windSpeed)} mph` : fallbackHour.wind;
+
+        els.currentCondition.textContent = current?.textDescription || fallbackHour.forecast;
+        els.currentTemp.innerHTML = `${temp}&deg;F`;
+        els.currentFeels.innerHTML = `${feels}&deg;F`;
+        els.currentHumidity.textContent = `${Number.isFinite(humidity) ? round(humidity) : "--"}%`;
+        els.currentWind.textContent = wind;
+      }
+
+      function renderHourly(hours) {
+        els.hourlyBody.innerHTML = hours
+          .map(
+            (hour, index) => `
+              <tr class="${index === 0 ? "current-row" : ""}">
+                <td>${formatHour(hour.time)}</td>
+                <td>${hour.temp}&deg;F</td>
+                <td>${hour.feels}&deg;F</td>
+                <td>${hour.rain}%</td>
+                <td>${hour.wind}</td>
+                <td class="forecast-cell">${hour.forecast}</td>
+              </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function renderDaily(days) {
+        els.dailyBody.innerHTML = days
+          .map(
+            (day, index) => `
+              <tr class="${index === 0 ? "current-row" : ""}">
+                <td>${day.date}</td>
+                <td>${day.high}&deg;F</td>
+                <td>${day.low}&deg;F</td>
+                <td class="forecast-cell">${day.forecast}</td>
+              </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function drawChart(hours) {
+        const canvas = els.chart;
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+        const pad = { top: 22, right: 22, bottom: 52, left: 54 };
+        const temps = hours.map((hour) => hour.temp);
+        const min = Math.floor((Math.min(...temps) - 5) / 10) * 10;
+        const max = Math.ceil((Math.max(...temps) + 5) / 10) * 10;
+        const plotWidth = width - pad.left - pad.right;
+        const plotHeight = height - pad.top - pad.bottom;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "#0d1612";
+        ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = "#284138";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#b7cabf";
+        ctx.font = "13px Segoe UI, sans-serif";
+
+        for (let tick = min; tick <= max; tick += 10) {
+          const y = pad.top + ((max - tick) / (max - min)) * plotHeight;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(width - pad.right, y);
+          ctx.stroke();
+          ctx.fillText(String(tick), 16, y + 4);
+        }
+
+        const points = temps.map((temp, index) => ({
+          x: pad.left + (index / (temps.length - 1)) * plotWidth,
+          y: pad.top + ((max - temp) / (max - min)) * plotHeight,
+        }));
+
+        ctx.strokeStyle = "#42b77a";
+        ctx.lineWidth = 4;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.stroke();
+
+        ctx.fillStyle = "#dceee6";
+        ctx.font = "12px Segoe UI, sans-serif";
+        hours.forEach((hour, index) => {
+          if (index % 2 !== 0) return;
+          const x = pad.left + (index / (hours.length - 1)) * plotWidth;
+          ctx.fillText(new Date(hour.time).toLocaleTimeString([], { hour: "numeric" }), x - 10, height - 25);
+        });
+
+        ctx.save();
+        ctx.translate(16, height / 2 + 24);
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = "700 13px Segoe UI, sans-serif";
+        ctx.fillText("Temp (F)", 0, 0);
+        ctx.restore();
+
+        ctx.font = "800 13px Segoe UI, sans-serif";
+        ctx.fillText("Next 24 Hours", width / 2 - 48, height - 8);
+      }
+
+      async function loadWeather() {
+        setStatus("Updating weather...");
+        els.refresh.disabled = true;
+
+        const point = await getJson(`https://api.weather.gov/points/${PEKIN.latitude},${PEKIN.longitude}`, {
+          headers: { Accept: "application/geo+json" },
+        });
+        const openMeteoParams = new URLSearchParams({
+          latitude: PEKIN.latitude,
+          longitude: PEKIN.longitude,
+          timezone: "America/Chicago",
+          forecast_days: "10",
+          temperature_unit: "fahrenheit",
+          wind_speed_unit: "mph",
+          daily: "weather_code,temperature_2m_max,temperature_2m_min",
+        });
+
+        const [hourly, stations, extended] = await Promise.all([
+          getJson(point.properties.forecastHourly, { headers: { Accept: "application/geo+json" } }),
+          getJson(point.properties.observationStations, { headers: { Accept: "application/geo+json" } }),
+          getJson(`https://api.open-meteo.com/v1/forecast?${openMeteoParams}`),
+        ]);
+
+        const stationUrl = stations.features?.[0]?.id;
+        const latestObservation = stationUrl
+          ? await getJson(`${stationUrl}/observations/latest?require_qc=false`, {
+              headers: { Accept: "application/geo+json" },
+            })
+          : null;
+
+        const hours = normalizeNwsHourly(hourly.properties.periods);
+        const days = normalizeOpenMeteoDaily(extended.daily);
+
+        renderCurrent(latestObservation?.properties, hours[0]);
+        renderHourly(hours);
+        renderDaily(days);
+        drawChart(hours);
+
+        const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        els.lastUpdated.textContent = `Last updated: ${time}`;
+        setStatus("Current and hourly forecast from National Weather Service. 10-day high/low from Open-Meteo extended outlook.");
+        els.refresh.disabled = false;
+      }
+
+      els.refresh.addEventListener("click", loadWeather);
+      setInterval(loadWeather, 5 * 60 * 1000);
+      loadWeather().catch((error) => {
+        console.error(error);
+        els.refresh.disabled = false;
+        setStatus("Could not load the weather feed. Check your connection and refresh the page.", true);
+      });
+    </script>
+  </body>
+</html>
