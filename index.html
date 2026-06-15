@@ -219,10 +219,113 @@
         background: #0d1612;
       }
 
-      canvas {
+      .radar-timeline {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        margin: -1px 0 8px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .timeline-track {
+        position: relative;
+        height: 4px;
+        border-radius: 999px;
+        background: #284138;
+        overflow: visible;
+      }
+
+      .timeline-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #2f8f63, #5be191);
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: 0%;
+        top: 50%;
+        width: 13px;
+        height: 13px;
+        border: 2px solid #e9fff3;
+        border-radius: 999px;
+        background: #42b77a;
+        box-shadow: 0 0 0 5px rgba(66, 183, 122, 0.18);
+        transform: translate(-50%, -50%);
+      }
+
+      .radar-map {
         width: 100%;
         height: 100%;
         display: block;
+        position: relative;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #09110e;
+      }
+
+      .tile-layer {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+      }
+
+      .tile-layer img {
+        position: absolute;
+      }
+
+      .base-layer {
+        filter: saturate(0.95) brightness(0.9) contrast(1.1);
+        opacity: 0.96;
+      }
+
+      .radar-layer {
+        opacity: 0;
+        transition: opacity 240ms ease;
+        filter: saturate(1.28) brightness(1.18);
+        mix-blend-mode: lighten;
+      }
+
+      .radar-status {
+        position: absolute;
+        left: 18px;
+        bottom: 18px;
+        z-index: 500;
+        max-width: calc(100% - 36px);
+        padding: 6px 9px;
+        border: 1px solid rgba(66, 183, 122, 0.32);
+        border-radius: 999px;
+        background: rgba(7, 13, 11, 0.78);
+        color: #dceee6;
+        font-size: 0.76rem;
+        font-weight: 800;
+        backdrop-filter: blur(8px);
+      }
+
+      .radar-status {
+        display: none;
+      }
+
+      .map-credit {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        z-index: 520;
+        padding: 3px 6px;
+        border-radius: 6px;
+        background: rgba(7, 13, 11, 0.72);
+        color: #9fb3aa;
+        font-size: 0.66rem;
+        font-weight: 700;
+      }
+
+      .radar-frame {
+        position: relative;
       }
 
       .status {
@@ -363,11 +466,19 @@
 
           <section class="panel card" aria-labelledby="graph-title">
             <div class="panel-header">
-              <h2 id="graph-title">Graph</h2>
-              <span>Next 24 hours temp</span>
+              <h2 id="graph-title">Radar Loop</h2>
             </div>
-            <div class="chart-wrap">
-              <canvas id="temp-chart" width="760" height="340" aria-label="Temperature line graph"></canvas>
+            <div class="radar-timeline" aria-label="Radar loop timeline">
+              <span id="radar-start">--</span>
+              <div class="timeline-track">
+                <div id="timeline-fill" class="timeline-fill"></div>
+                <div id="timeline-dot" class="timeline-dot"></div>
+              </div>
+              <span id="radar-end">--</span>
+            </div>
+            <div class="chart-wrap radar-frame">
+              <div id="radar-map" class="radar-map" aria-label="Animated weather radar for Pekin"></div>
+              <div id="radar-status" class="radar-status">Loading radar...</div>
             </div>
           </section>
         </div>
@@ -392,9 +503,22 @@
         currentWind: document.querySelector("#current-wind"),
         hourlyBody: document.querySelector("#hourly-body"),
         dailyBody: document.querySelector("#daily-body"),
-        chart: document.querySelector("#temp-chart"),
+        radarMap: document.querySelector("#radar-map"),
+        radarStart: document.querySelector("#radar-start"),
+        radarEnd: document.querySelector("#radar-end"),
+        timelineFill: document.querySelector("#timeline-fill"),
+        timelineDot: document.querySelector("#timeline-dot"),
+        radarStatus: document.querySelector("#radar-status"),
         status: document.querySelector("#status"),
       };
+
+      let radarMap;
+      let radarLayers = [];
+      let radarFrames = [];
+      let radarFrameIndex = 0;
+      let radarAnimationId;
+      let radarAnimationStart = 0;
+      const radarCycleMs = 10000;
 
       const formatters = {
         hour: new Intl.DateTimeFormat("en-US", { weekday: "short", hour: "numeric", hour12: true }),
@@ -534,68 +658,158 @@
           .join("");
       }
 
-      function drawChart(hours) {
-        const canvas = els.chart;
-        const ctx = canvas.getContext("2d");
-        const width = canvas.width;
-        const height = canvas.height;
-        const pad = { top: 22, right: 22, bottom: 52, left: 54 };
-        const temps = hours.map((hour) => hour.temp);
-        const min = Math.floor((Math.min(...temps) - 5) / 10) * 10;
-        const max = Math.ceil((Math.max(...temps) + 5) / 10) * 10;
-        const plotWidth = width - pad.left - pad.right;
-        const plotHeight = height - pad.top - pad.bottom;
+      function tileCoordinate({ lat, lon, zoom }) {
+        const latRad = (lat * Math.PI) / 180;
+        const scale = 2 ** zoom;
+        return {
+          x: ((lon + 180) / 360) * scale,
+          y: ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * scale,
+        };
+      }
 
-        ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = "#0d1612";
-        ctx.fillRect(0, 0, width, height);
-        ctx.strokeStyle = "#284138";
-        ctx.lineWidth = 1;
-        ctx.fillStyle = "#b7cabf";
-        ctx.font = "13px Segoe UI, sans-serif";
+      function radarTileUrl(host, frame, x, y, zoom) {
+        return `${host}${frame.path}/256/${zoom}/${x}/${y}/6/1_1.png?v=${frame.time}`;
+      }
 
-        for (let tick = min; tick <= max; tick += 10) {
-          const y = pad.top + ((max - tick) / (max - min)) * plotHeight;
-          ctx.beginPath();
-          ctx.moveTo(pad.left, y);
-          ctx.lineTo(width - pad.right, y);
-          ctx.stroke();
-          ctx.fillText(String(tick), 16, y + 4);
+      function buildTileLayer({ className, getUrl, center, radius = 2, tileSize = 256 }) {
+        const layer = document.createElement("div");
+        layer.className = `tile-layer ${className}`;
+        const tileX = Math.floor(center.x);
+        const tileY = Math.floor(center.y);
+        const layerSize = (radius * 2 + 1) * tileSize;
+        const centerPixelX = radius * tileSize + (center.x - tileX) * tileSize;
+        const centerPixelY = radius * tileSize + (center.y - tileY) * tileSize;
+        layer.style.width = `${layerSize}px`;
+        layer.style.height = `${layerSize}px`;
+        layer.style.transform = `translate(${-centerPixelX}px, ${-centerPixelY}px)`;
+
+        for (let row = -radius; row <= radius; row += 1) {
+          for (let col = -radius; col <= radius; col += 1) {
+            const img = document.createElement("img");
+            img.alt = "";
+            img.decoding = "async";
+            img.src = getUrl(tileX + col, tileY + row);
+            img.style.left = `${(col + radius) * tileSize}px`;
+            img.style.top = `${(row + radius) * tileSize}px`;
+            img.style.width = `${tileSize}px`;
+            img.style.height = `${tileSize}px`;
+            layer.appendChild(img);
+          }
         }
 
-        const points = temps.map((temp, index) => ({
-          x: pad.left + (index / (temps.length - 1)) * plotWidth,
-          y: pad.top + ((max - temp) / (max - min)) * plotHeight,
-        }));
+        return layer;
+      }
 
-        ctx.strokeStyle = "#42b77a";
-        ctx.lineWidth = 4;
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        points.forEach((point, index) => {
-          if (index === 0) ctx.moveTo(point.x, point.y);
-          else ctx.lineTo(point.x, point.y);
-        });
-        ctx.stroke();
+      function setTimelineProgress(progress) {
+        const percent = Math.max(0, Math.min(100, progress * 100));
+        els.timelineDot.style.left = `${percent}%`;
+        els.timelineFill.style.width = `${percent}%`;
+      }
 
-        ctx.fillStyle = "#dceee6";
-        ctx.font = "12px Segoe UI, sans-serif";
-        hours.forEach((hour, index) => {
-          if (index % 2 !== 0) return;
-          const x = pad.left + (index / (hours.length - 1)) * plotWidth;
-          ctx.fillText(new Date(hour.time).toLocaleTimeString([], { hour: "numeric" }), x - 10, height - 25);
+      function setRadarFrame(index) {
+        if (!radarFrames.length) return;
+
+        radarFrameIndex = index % radarFrames.length;
+        const frame = radarFrames[radarFrameIndex];
+        const date = new Date(frame.time * 1000);
+
+        radarLayers.forEach((layer, layerIndex) => {
+          layer.style.opacity = layerIndex === radarFrameIndex ? "0.94" : "0";
         });
 
-        ctx.save();
-        ctx.translate(16, height / 2 + 24);
-        ctx.rotate(-Math.PI / 2);
-        ctx.font = "700 13px Segoe UI, sans-serif";
-        ctx.fillText("Temp (F)", 0, 0);
-        ctx.restore();
+        els.radarStatus.textContent = `${date.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })} radar`;
+      }
 
-        ctx.font = "800 13px Segoe UI, sans-serif";
-        ctx.fillText("Next 24 Hours", width / 2 - 48, height - 8);
+      function animateRadar(time) {
+        if (!radarFrames.length) return;
+        if (!radarAnimationStart) radarAnimationStart = time;
+
+        const elapsed = (time - radarAnimationStart) % radarCycleMs;
+        const progress = elapsed / radarCycleMs;
+        const frameIndex = Math.min(radarFrames.length - 1, Math.floor(progress * radarFrames.length));
+
+        setTimelineProgress(progress);
+        if (frameIndex !== radarFrameIndex) {
+          setRadarFrame(frameIndex);
+        }
+
+        radarAnimationId = window.requestAnimationFrame(animateRadar);
+      }
+
+      function startRadarLoop() {
+        window.cancelAnimationFrame(radarAnimationId);
+        radarFrameIndex = -1;
+        radarAnimationStart = 0;
+        setTimelineProgress(0);
+        setRadarFrame(0);
+        radarAnimationId = window.requestAnimationFrame(animateRadar);
+      }
+
+      async function loadRadar(hours = []) {
+        const mapZoom = 10;
+        const radarZoom = 6;
+        const radarTileSize = 256 * 2 ** (mapZoom - radarZoom);
+        const mapCenter = tileCoordinate({ lat: PEKIN.latitude, lon: PEKIN.longitude, zoom: mapZoom });
+        const radarCenter = tileCoordinate({ lat: PEKIN.latitude, lon: PEKIN.longitude, zoom: radarZoom });
+        const radarData = await getJson("https://api.rainviewer.com/public/weather-maps.json");
+        const pastFrames = (radarData.radar?.past || []).slice(-8);
+        const nowcastFrames = (radarData.radar?.nowcast || []).slice(0, 16);
+        const frames = [...pastFrames, ...nowcastFrames].slice(0, 24);
+
+        if (!frames.length) {
+          els.radarStart.textContent = "--";
+          els.radarEnd.textContent = "--";
+          els.radarStatus.textContent = "Radar unavailable";
+          return;
+        }
+
+        radarFrames = frames;
+        els.radarMap.innerHTML = "";
+
+        const baseLayer = buildTileLayer({
+          className: "base-layer",
+          center: mapCenter,
+          radius: 2,
+          tileSize: 256,
+          getUrl: (x, y) => `https://tile.openstreetmap.org/${mapZoom}/${x}/${y}.png`,
+        });
+        els.radarMap.appendChild(baseLayer);
+
+        radarLayers = radarFrames.map((frame, index) => {
+          const layer = buildTileLayer({
+            className: "radar-layer",
+            center: radarCenter,
+            radius: 1,
+            tileSize: radarTileSize,
+            getUrl: (x, y) => radarTileUrl(radarData.host, frame, x, y, radarZoom),
+          });
+          layer.style.opacity = index === 0 ? "0.94" : "0";
+          layer.style.zIndex = String(10 + index);
+          els.radarMap.appendChild(layer);
+          return layer;
+        });
+
+        els.radarMap.insertAdjacentHTML(
+          "beforeend",
+          `<div style="position:absolute; left:50%; top:50%; width:9px; height:9px; transform:translate(-50%,-50%); border-radius:999px; background:#e9fff3; box-shadow:0 0 0 5px rgba(66,183,122,.28); z-index:500;" title="Pekin"></div>
+           <div class="map-credit">Roads/cities: OpenStreetMap</div>`,
+        );
+
+        const first = new Date(radarFrames[0].time * 1000);
+        const last = new Date(radarFrames[radarFrames.length - 1].time * 1000);
+        els.radarStart.textContent = first.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        els.radarEnd.textContent = last.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        });
+
+        startRadarLoop();
       }
 
       async function loadWeather() {
@@ -634,7 +848,7 @@
         renderCurrent(latestObservation?.properties, hours[0]);
         renderHourly(hours);
         renderDaily(days);
-        drawChart(hours);
+        await loadRadar(hours);
 
         const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
         els.lastUpdated.textContent = `Last updated: ${time}`;
