@@ -184,6 +184,27 @@
       .forecast-cell { white-space: normal; min-width: 170px; }
       .side { display: grid; gap: 12px; }
 
+      .sun-row {
+        min-height: 43px;
+        padding: 9px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: #dff8eb;
+        font-size: 0.94rem;
+        font-weight: 850;
+        background: rgba(17, 31, 26, 0.94);
+      }
+
+      .sun-row span {
+        white-space: nowrap;
+      }
+
+      .sun-divider {
+        color: var(--muted);
+      }
+
       .chart-wrap {
         height: 310px;
         padding: 8px;
@@ -278,6 +299,7 @@
         .current { grid-template-columns: 1fr; }
         .panel { padding: 9px; overflow-x: auto; }
         th, td { padding: 6px 8px; font-size: 0.84rem; }
+        .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.88rem; }
       }
     </style>
   </head>
@@ -334,6 +356,12 @@
             </table>
           </section>
 
+          <section class="sun-row card" aria-label="Sunrise and sunset">
+            <span>Sunrise: <strong id="sunrise-time">--</strong></span>
+            <span class="sun-divider">-</span>
+            <span>Sunset: <strong id="sunset-time">--</strong></span>
+          </section>
+
           <section class="panel card" aria-labelledby="graph-title">
             <div class="panel-header"><h2 id="graph-title">Radar Loop</h2></div>
             <div class="radar-timeline" aria-label="Radar loop timeline">
@@ -369,6 +397,8 @@
         hourlyBody: document.querySelector("#hourly-body"),
         dailyTitle: document.querySelector("#daily-title"),
         dailyBody: document.querySelector("#daily-body"),
+        sunriseTime: document.querySelector("#sunrise-time"),
+        sunsetTime: document.querySelector("#sunset-time"),
         radarMap: document.querySelector("#radar-map"),
         radarStart: document.querySelector("#radar-start"),
         radarEnd: document.querySelector("#radar-end"),
@@ -388,6 +418,7 @@
       const formatters = {
         hour: new Intl.DateTimeFormat("en-US", { weekday: "short", hour: "numeric", hour12: true }),
         day: new Intl.DateTimeFormat("en-US", { weekday: "short", month: "2-digit", day: "2-digit" }),
+        sun: new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }),
       };
 
       function round(value) { return Math.round(Number(value)); }
@@ -395,6 +426,7 @@
       function kmhToMph(value) { return round(Number(value) * 0.621371); }
       function formatHour(value) { return formatters.hour.format(new Date(value)).replace(",", ""); }
       function formatDayFromDate(value) { return formatters.day.format(new Date(value)).replace(",", ""); }
+      function formatSunTime(value) { return value ? formatters.sun.format(new Date(value)).replace(" ", "").toLowerCase() : "--"; }
 
       function setStatus(message, isError = false) {
         els.status.textContent = message;
@@ -474,6 +506,12 @@
             <td>${day.low}&deg;F</td>
             <td class="forecast-cell">${day.forecast}</td>
           </tr>`).join("");
+      }
+
+      function renderSun(sunData) {
+        const today = sunData?.daily;
+        els.sunriseTime.textContent = formatSunTime(today?.sunrise?.[0]);
+        els.sunsetTime.textContent = formatSunTime(today?.sunset?.[0]);
       }
 
       function tileCoordinate({ lat, lon, zoom }) {
@@ -623,10 +661,19 @@
             headers: { Accept: "application/geo+json" },
           });
 
-          const [hourly, daily, stations] = await Promise.all([
+          const sunParams = new URLSearchParams({
+            latitude: PEKIN.latitude,
+            longitude: PEKIN.longitude,
+            timezone: "America/Chicago",
+            forecast_days: "1",
+            daily: "sunrise,sunset",
+          });
+
+          const [hourly, daily, stations, sunData] = await Promise.all([
             getJson(point.properties.forecastHourly, { headers: { Accept: "application/geo+json" } }),
             getJson(point.properties.forecast, { headers: { Accept: "application/geo+json" } }),
             getJson(point.properties.observationStations, { headers: { Accept: "application/geo+json" } }),
+            getJson(`https://api.open-meteo.com/v1/forecast?${sunParams}`),
           ]);
 
           const stationUrl = stations.features?.[0]?.id;
@@ -640,6 +687,7 @@
           renderCurrent(latestObservation?.properties, hours[0]);
           renderHourly(hours);
           renderDaily(days);
+          renderSun(sunData);
           await loadRadar();
 
           const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
