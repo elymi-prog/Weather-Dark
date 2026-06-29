@@ -35,7 +35,7 @@
       .page {
         width: min(1880px, calc(100% - 28px));
         margin: 0 auto;
-        padding: 10px 0 14px;
+        padding: 8px 0 10px;
       }
 
       .topbar {
@@ -43,12 +43,12 @@
         grid-template-columns: 1fr auto;
         gap: 18px;
         align-items: start;
-        margin-bottom: 8px;
+        margin-bottom: 7px;
       }
 
       h1 {
         margin: 0;
-        font-size: clamp(1.7rem, 2.1vw, 2.7rem);
+        font-size: clamp(1.95rem, 2.35vw, 3rem);
         line-height: 1;
         letter-spacing: 0;
       }
@@ -59,13 +59,13 @@
         justify-content: flex-end;
         gap: 10px;
         color: var(--muted);
-        font-size: 0.92rem;
+        font-size: 0.98rem;
         text-align: right;
       }
 
       button {
-        min-height: 38px;
-        padding: 0 15px;
+        min-height: 40px;
+        padding: 0 16px;
         border: 1px solid #b8c7d1;
         border-radius: 8px;
         background: #13231d;
@@ -95,12 +95,12 @@
         grid-template-columns: repeat(5, minmax(120px, 1fr));
         gap: 10px;
         padding: 9px;
-        margin-bottom: 8px;
+        margin-bottom: 7px;
       }
 
       .metric {
-        min-height: 56px;
-        padding: 8px 10px;
+        min-height: 61px;
+        padding: 9px 11px;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--panel-soft);
@@ -109,7 +109,7 @@
       .metric span {
         display: block;
         color: var(--muted);
-        font-size: 0.78rem;
+        font-size: 0.82rem;
         font-weight: 800;
         text-transform: uppercase;
       }
@@ -117,7 +117,7 @@
       .metric strong {
         display: block;
         margin-top: 2px;
-        font-size: clamp(1.1rem, 1.5vw, 1.75rem);
+        font-size: clamp(1.28rem, 1.7vw, 2rem);
         line-height: 1.05;
       }
 
@@ -128,25 +128,25 @@
         align-items: start;
       }
 
-      .panel { padding: 9px; }
+      .panel { padding: 10px; }
 
       .panel-header {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
         gap: 12px;
-        margin-bottom: 6px;
+        margin-bottom: 7px;
       }
 
       h2 {
         margin: 0;
-        font-size: 1.15rem;
+        font-size: 1.28rem;
         letter-spacing: 0;
       }
 
       .panel-header span {
         color: var(--muted);
-        font-size: 0.82rem;
+        font-size: 0.9rem;
         font-weight: 750;
       }
 
@@ -161,11 +161,12 @@
       }
 
       th, td {
-        padding: 4px 8px;
+        padding: 7px 10px;
         border-bottom: 1px solid var(--line);
         text-align: left;
         white-space: nowrap;
-        font-size: 0.84rem;
+        font-size: 0.98rem;
+        line-height: 1.22;
       }
 
       th {
@@ -174,7 +175,7 @@
         z-index: 1;
         background: var(--green-soft);
         color: #dff8eb;
-        font-size: 0.74rem;
+        font-size: 0.82rem;
         text-transform: uppercase;
       }
 
@@ -185,28 +186,23 @@
       .side { display: grid; gap: 12px; }
 
       .sun-row {
-        min-height: 43px;
-        padding: 9px 12px;
+        min-height: 52px;
+        padding: 11px 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 12px;
         color: #dff8eb;
-        font-size: 0.94rem;
+        font-size: 1.08rem;
         font-weight: 850;
         background: rgba(17, 31, 26, 0.94);
       }
 
-      .sun-row span {
-        white-space: nowrap;
-      }
-
-      .sun-divider {
-        color: var(--muted);
-      }
+      .sun-row span { white-space: nowrap; }
+      .sun-divider { color: var(--muted); }
 
       .chart-wrap {
-        height: 310px;
+        height: 340px;
         padding: 8px;
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -218,15 +214,15 @@
         grid-template-columns: auto 1fr auto;
         gap: 10px;
         align-items: center;
-        margin: -1px 0 8px;
+        margin: -1px 0 9px;
         color: var(--muted);
-        font-size: 0.78rem;
+        font-size: 0.88rem;
         font-weight: 800;
       }
 
       .timeline-track {
         position: relative;
-        height: 4px;
+        height: 5px;
         border-radius: 999px;
         background: #284138;
         overflow: visible;
@@ -244,8 +240,8 @@
         position: absolute;
         left: 0%;
         top: 50%;
-        width: 13px;
-        height: 13px;
+        width: 15px;
+        height: 15px;
         border: 2px solid #e9fff3;
         border-radius: 999px;
         background: #42b77a;
@@ -279,12 +275,12 @@
         border-radius: 6px;
         background: rgba(7, 13, 11, 0.72);
         color: #9fb3aa;
-        font-size: 0.66rem;
+        font-size: 0.7rem;
         font-weight: 700;
       }
 
       .radar-frame { position: relative; }
-      .status { min-height: 22px; margin: 9px 0 0; color: var(--muted); font-size: 0.82rem; font-weight: 700; }
+      .status { min-height: 22px; margin: 9px 0 0; color: var(--muted); font-size: 0.88rem; font-weight: 700; }
       .error { color: var(--warn); }
 
       @media (max-width: 1260px) {
@@ -298,8 +294,8 @@
         .actions { justify-content: flex-start; text-align: left; }
         .current { grid-template-columns: 1fr; }
         .panel { padding: 9px; overflow-x: auto; }
-        th, td { padding: 6px 8px; font-size: 0.84rem; }
-        .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.88rem; }
+        th, td { padding: 6px 8px; font-size: 0.9rem; }
+        .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.95rem; }
       }
     </style>
   </head>
