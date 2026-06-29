@@ -279,6 +279,34 @@
         font-weight: 700;
       }
 
+      .news-card {
+        min-height: 62px;
+        padding: 10px 13px;
+        display: grid;
+        align-content: center;
+        gap: 4px;
+        background: rgba(17, 31, 26, 0.94);
+      }
+
+      .news-label {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .news-title {
+        color: #ffffff;
+        font-size: 1.02rem;
+        font-weight: 850;
+        line-height: 1.18;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
       .radar-frame { position: relative; }
       .status { min-height: 22px; margin: 9px 0 0; color: var(--muted); font-size: 0.88rem; font-weight: 700; }
       .error { color: var(--warn); }
@@ -296,6 +324,7 @@
         .panel { padding: 9px; overflow-x: auto; }
         th, td { padding: 6px 8px; font-size: 0.9rem; }
         .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.95rem; }
+        .news-title { font-size: 0.95rem; }
       }
     </style>
   </head>
@@ -373,6 +402,11 @@
               <div id="radar-status" class="radar-status">Loading radar...</div>
             </div>
           </section>
+
+          <section class="news-card card" aria-label="Top news headline">
+            <div class="news-label">Top News</div>
+            <div id="news-title" class="news-title">Loading headline...</div>
+          </section>
         </div>
       </section>
 
@@ -381,6 +415,8 @@
 
     <script>
       const PEKIN = { latitude: 40.5675, longitude: -89.6407 };
+      const NEWS_RSS = "https://feeds.npr.org/1001/rss.xml";
+      const RSS_PROXY = "https://api.allorigins.win/raw?url=";
 
       const els = {
         refresh: document.querySelector("#refresh-button"),
@@ -395,6 +431,7 @@
         dailyBody: document.querySelector("#daily-body"),
         sunriseTime: document.querySelector("#sunrise-time"),
         sunsetTime: document.querySelector("#sunset-time"),
+        newsTitle: document.querySelector("#news-title"),
         radarMap: document.querySelector("#radar-map"),
         radarStart: document.querySelector("#radar-start"),
         radarEnd: document.querySelector("#radar-end"),
@@ -433,6 +470,12 @@
         const response = await fetch(url, { cache: "no-store", ...options });
         if (!response.ok) throw new Error(`Weather service did not respond: ${response.status}`);
         return response.json();
+      }
+
+      async function getText(url, options = {}) {
+        const response = await fetch(url, { cache: "no-store", ...options });
+        if (!response.ok) throw new Error(`Feed did not respond: ${response.status}`);
+        return response.text();
       }
 
       function normalizeNwsHourly(periods) {
@@ -508,6 +551,18 @@
         const today = sunData?.daily;
         els.sunriseTime.textContent = formatSunTime(today?.sunrise?.[0]);
         els.sunsetTime.textContent = formatSunTime(today?.sunset?.[0]);
+      }
+
+      async function loadNews() {
+        try {
+          const rssText = await getText(`${RSS_PROXY}${encodeURIComponent(NEWS_RSS)}`);
+          const doc = new DOMParser().parseFromString(rssText, "application/xml");
+          const title = doc.querySelector("channel > item > title")?.textContent?.trim();
+          els.newsTitle.textContent = title || "No headline available";
+        } catch (error) {
+          console.error(error);
+          els.newsTitle.textContent = "Headline unavailable";
+        }
       }
 
       function tileCoordinate({ lat, lon, zoom }) {
@@ -684,7 +739,7 @@
           renderHourly(hours);
           renderDaily(days);
           renderSun(sunData);
-          await loadRadar();
+          await Promise.allSettled([loadRadar(), loadNews()]);
 
           const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
           els.lastUpdated.textContent = `Last updated: ${time}`;
