@@ -25,6 +25,7 @@
       body {
         margin: 0;
         min-height: 100vh;
+        overflow: hidden;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         background:
           linear-gradient(180deg, rgba(7, 13, 11, 0.78), rgba(7, 13, 11, 0.98)),
@@ -76,11 +77,7 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
       }
 
-      button:hover {
-        border-color: var(--green);
-        color: #b8f2d0;
-      }
-
+      button:hover { border-color: var(--green); color: #b8f2d0; }
       button:disabled { opacity: 0.7; cursor: wait; }
 
       .card {
@@ -138,17 +135,8 @@
         margin-bottom: 7px;
       }
 
-      h2 {
-        margin: 0;
-        font-size: 1.28rem;
-        letter-spacing: 0;
-      }
-
-      .panel-header span {
-        color: var(--muted);
-        font-size: 0.9rem;
-        font-weight: 750;
-      }
+      h2 { margin: 0; font-size: 1.28rem; letter-spacing: 0; }
+      .panel-header span { color: var(--muted); font-size: 0.9rem; font-weight: 750; }
 
       table {
         width: 100%;
@@ -202,7 +190,7 @@
       .sun-divider { color: var(--muted); }
 
       .chart-wrap {
-        height: 340px;
+        height: 332px;
         padding: 8px;
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -220,98 +208,29 @@
         font-weight: 800;
       }
 
-      .timeline-track {
-        position: relative;
-        height: 5px;
-        border-radius: 999px;
-        background: #284138;
-        overflow: visible;
-      }
+      .timeline-track { position: relative; height: 5px; border-radius: 999px; background: #284138; overflow: visible; }
+      .timeline-fill { position: absolute; inset: 0 auto 0 0; width: 0%; border-radius: inherit; background: linear-gradient(90deg, #2f8f63, #5be191); }
+      .timeline-dot { position: absolute; left: 0%; top: 50%; width: 15px; height: 15px; border: 2px solid #e9fff3; border-radius: 999px; background: #42b77a; box-shadow: 0 0 0 5px rgba(66, 183, 122, 0.18); transform: translate(-50%, -50%); }
 
-      .timeline-fill {
-        position: absolute;
-        inset: 0 auto 0 0;
-        width: 0%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #2f8f63, #5be191);
-      }
-
-      .timeline-dot {
-        position: absolute;
-        left: 0%;
-        top: 50%;
-        width: 15px;
-        height: 15px;
-        border: 2px solid #e9fff3;
-        border-radius: 999px;
-        background: #42b77a;
-        box-shadow: 0 0 0 5px rgba(66, 183, 122, 0.18);
-        transform: translate(-50%, -50%);
-      }
-
-      .radar-map {
-        width: 100%;
-        height: 100%;
-        display: block;
-        position: relative;
-        border-radius: 6px;
-        overflow: hidden;
-        background: #09110e;
-      }
-
+      .radar-map { width: 100%; height: 100%; display: block; position: relative; border-radius: 6px; overflow: hidden; background: #09110e; }
       .tile-layer { position: absolute; left: 50%; top: 50%; }
       .tile-layer img { position: absolute; }
       .base-layer { filter: saturate(0.95) brightness(0.9) contrast(1.1); opacity: 0.96; }
       .radar-layer { opacity: 0; transition: opacity 240ms ease; filter: saturate(1.28) brightness(1.18); mix-blend-mode: lighten; }
-
       .radar-status { display: none; }
 
-      .map-credit {
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-        z-index: 520;
-        padding: 3px 6px;
-        border-radius: 6px;
-        background: rgba(7, 13, 11, 0.72);
-        color: #9fb3aa;
-        font-size: 0.7rem;
-        font-weight: 700;
-      }
+      .map-credit { position: absolute; right: 10px; bottom: 10px; z-index: 520; padding: 3px 6px; border-radius: 6px; background: rgba(7, 13, 11, 0.72); color: #9fb3aa; font-size: 0.7rem; font-weight: 700; }
 
-      .news-card {
-        min-height: 62px;
-        padding: 10px 13px;
-        display: grid;
-        align-content: center;
-        gap: 4px;
-        background: rgba(17, 31, 26, 0.94);
-      }
-
-      .news-label {
-        color: var(--muted);
-        font-size: 0.78rem;
-        font-weight: 850;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
-
-      .news-title {
-        color: #ffffff;
-        font-size: 1.02rem;
-        font-weight: 850;
-        line-height: 1.18;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
+      .news-card { min-height: 58px; padding: 9px 13px; display: grid; align-content: center; gap: 4px; background: rgba(17, 31, 26, 0.94); }
+      .news-label { color: var(--muted); font-size: 0.78rem; font-weight: 850; text-transform: uppercase; letter-spacing: 0.03em; }
+      .news-title { color: #ffffff; font-size: 1.02rem; font-weight: 850; line-height: 1.18; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
       .radar-frame { position: relative; }
       .status { min-height: 22px; margin: 9px 0 0; color: var(--muted); font-size: 0.88rem; font-weight: 700; }
       .error { color: var(--warn); }
 
       @media (max-width: 1260px) {
+        body { overflow: auto; }
         .layout { grid-template-columns: 1fr; }
         .current { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
@@ -331,15 +250,10 @@
   <body>
     <main class="page">
       <header class="topbar">
-        <div>
-          <h1>Weather Forecast - Pekin 61554</h1>
-        </div>
+        <div><h1>Weather Forecast - Pekin 61554</h1></div>
         <div class="actions">
           <button id="refresh-button" type="button">Refresh Now</button>
-          <div>
-            <div>Auto-refresh every 5 minutes</div>
-            <div id="last-updated">Last updated: --</div>
-          </div>
+          <div><div>Auto-refresh every 5 minutes</div><div id="last-updated">Last updated: --</div></div>
         </div>
       </header>
 
@@ -353,60 +267,25 @@
 
       <section class="layout">
         <section class="panel card" aria-labelledby="hourly-title">
-          <div class="panel-header">
-            <h2 id="hourly-title">Next 24 Hours</h2>
-            <span>Hourly forecast</span>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Time</th><th>Temp</th><th>Feels Like</th><th>Rain Chance</th><th>Wind</th><th>Forecast</th>
-              </tr>
-            </thead>
-            <tbody id="hourly-body"><tr><td colspan="6">Loading hourly forecast...</td></tr></tbody>
-          </table>
+          <div class="panel-header"><h2 id="hourly-title">Next 24 Hours</h2><span>Hourly forecast</span></div>
+          <table><thead><tr><th>Time</th><th>Temp</th><th>Feels Like</th><th>Rain Chance</th><th>Wind</th><th>Forecast</th></tr></thead><tbody id="hourly-body"><tr><td colspan="6">Loading hourly forecast...</td></tr></tbody></table>
         </section>
 
         <div class="side">
           <section class="panel card" aria-labelledby="daily-title">
-            <div class="panel-header">
-              <h2 id="daily-title">Next 7 Days High / Low</h2>
-              <span>NWS daily outlook</span>
-            </div>
-            <table>
-              <thead>
-                <tr><th>Date</th><th>High</th><th>Low</th><th>Forecast</th></tr>
-              </thead>
-              <tbody id="daily-body"><tr><td colspan="4">Loading daily forecast...</td></tr></tbody>
-            </table>
+            <div class="panel-header"><h2 id="daily-title">Next 7 Days High / Low</h2><span>NWS daily outlook</span></div>
+            <table><thead><tr><th>Date</th><th>High</th><th>Low</th><th>Forecast</th></tr></thead><tbody id="daily-body"><tr><td colspan="4">Loading daily forecast...</td></tr></tbody></table>
           </section>
 
-          <section class="sun-row card" aria-label="Sunrise and sunset">
-            <span>Sunrise: <strong id="sunrise-time">--</strong></span>
-            <span class="sun-divider">-</span>
-            <span>Sunset: <strong id="sunset-time">--</strong></span>
-          </section>
+          <section class="sun-row card" aria-label="Sunrise and sunset"><span>Sunrise: <strong id="sunrise-time">--</strong></span><span class="sun-divider">-</span><span>Sunset: <strong id="sunset-time">--</strong></span></section>
 
           <section class="panel card" aria-labelledby="graph-title">
             <div class="panel-header"><h2 id="graph-title">Radar Loop</h2></div>
-            <div class="radar-timeline" aria-label="Radar loop timeline">
-              <span id="radar-start">--</span>
-              <div class="timeline-track">
-                <div id="timeline-fill" class="timeline-fill"></div>
-                <div id="timeline-dot" class="timeline-dot"></div>
-              </div>
-              <span id="radar-end">--</span>
-            </div>
-            <div class="chart-wrap radar-frame">
-              <div id="radar-map" class="radar-map" aria-label="Animated weather radar for Pekin"></div>
-              <div id="radar-status" class="radar-status">Loading radar...</div>
-            </div>
+            <div class="radar-timeline" aria-label="Radar loop timeline"><span id="radar-start">--</span><div class="timeline-track"><div id="timeline-fill" class="timeline-fill"></div><div id="timeline-dot" class="timeline-dot"></div></div><span id="radar-end">--</span></div>
+            <div class="chart-wrap radar-frame"><div id="radar-map" class="radar-map" aria-label="Animated weather radar for Pekin"></div><div id="radar-status" class="radar-status">Loading radar...</div></div>
           </section>
 
-          <section class="news-card card" aria-label="Top news headline">
-            <div class="news-label">Top News</div>
-            <div id="news-title" class="news-title">Loading headline...</div>
-          </section>
+          <section class="news-card card" aria-label="Top news headline"><div class="news-label">Top News</div><div id="news-title" class="news-title">Loading headline...</div></section>
         </div>
       </section>
 
@@ -419,26 +298,7 @@
       const RSS_PROXY = "https://api.allorigins.win/raw?url=";
 
       const els = {
-        refresh: document.querySelector("#refresh-button"),
-        lastUpdated: document.querySelector("#last-updated"),
-        currentCondition: document.querySelector("#current-condition"),
-        currentTemp: document.querySelector("#current-temp"),
-        currentFeels: document.querySelector("#current-feels"),
-        currentHumidity: document.querySelector("#current-humidity"),
-        currentWind: document.querySelector("#current-wind"),
-        hourlyBody: document.querySelector("#hourly-body"),
-        dailyTitle: document.querySelector("#daily-title"),
-        dailyBody: document.querySelector("#daily-body"),
-        sunriseTime: document.querySelector("#sunrise-time"),
-        sunsetTime: document.querySelector("#sunset-time"),
-        newsTitle: document.querySelector("#news-title"),
-        radarMap: document.querySelector("#radar-map"),
-        radarStart: document.querySelector("#radar-start"),
-        radarEnd: document.querySelector("#radar-end"),
-        timelineFill: document.querySelector("#timeline-fill"),
-        timelineDot: document.querySelector("#timeline-dot"),
-        radarStatus: document.querySelector("#radar-status"),
-        status: document.querySelector("#status"),
+        refresh: document.querySelector("#refresh-button"), lastUpdated: document.querySelector("#last-updated"), currentCondition: document.querySelector("#current-condition"), currentTemp: document.querySelector("#current-temp"), currentFeels: document.querySelector("#current-feels"), currentHumidity: document.querySelector("#current-humidity"), currentWind: document.querySelector("#current-wind"), hourlyBody: document.querySelector("#hourly-body"), dailyTitle: document.querySelector("#daily-title"), dailyBody: document.querySelector("#daily-body"), sunriseTime: document.querySelector("#sunrise-time"), sunsetTime: document.querySelector("#sunset-time"), newsTitle: document.querySelector("#news-title"), radarMap: document.querySelector("#radar-map"), radarStart: document.querySelector("#radar-start"), radarEnd: document.querySelector("#radar-end"), timelineFill: document.querySelector("#timeline-fill"), timelineDot: document.querySelector("#timeline-dot"), radarStatus: document.querySelector("#radar-status"), status: document.querySelector("#status"),
       };
 
       let radarLayers = [];
@@ -448,11 +308,7 @@
       let radarAnimationStart = 0;
       const radarCycleMs = 10000;
 
-      const formatters = {
-        hour: new Intl.DateTimeFormat("en-US", { weekday: "short", hour: "numeric", hour12: true }),
-        day: new Intl.DateTimeFormat("en-US", { weekday: "short", month: "2-digit", day: "2-digit" }),
-        sun: new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }),
-      };
+      const formatters = { hour: new Intl.DateTimeFormat("en-US", { weekday: "short", hour: "numeric", hour12: true }), day: new Intl.DateTimeFormat("en-US", { weekday: "short", month: "2-digit", day: "2-digit" }), sun: new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) };
 
       function round(value) { return Math.round(Number(value)); }
       function cToF(value) { return round((Number(value) * 9) / 5 + 32); }
@@ -461,49 +317,51 @@
       function formatDayFromDate(value) { return formatters.day.format(new Date(value)).replace(",", ""); }
       function formatSunTime(value) { return value ? formatters.sun.format(new Date(value)).replace(" ", "").toLowerCase() : "--"; }
 
-      function setStatus(message, isError = false) {
-        els.status.textContent = message;
-        els.status.classList.toggle("error", isError);
+      function setStatus(message, isError = false) { els.status.textContent = message; els.status.classList.toggle("error", isError); }
+
+      async function getJson(url, options = {}) { const response = await fetch(url, { cache: "no-store", ...options }); if (!response.ok) throw new Error(`Weather service did not respond: ${response.status}`); return response.json(); }
+      async function getText(url, options = {}) { const response = await fetch(url, { cache: "no-store", ...options }); if (!response.ok) throw new Error(`Feed did not respond: ${response.status}`); return response.text(); }
+
+      function parseWindMph(value) {
+        const match = String(value || "").match(/\d+/);
+        return match ? Number(match[0]) : 0;
       }
 
-      async function getJson(url, options = {}) {
-        const response = await fetch(url, { cache: "no-store", ...options });
-        if (!response.ok) throw new Error(`Weather service did not respond: ${response.status}`);
-        return response.json();
-      }
+      function calculateFeelsLike(temp, humidity, windMph) {
+        const t = Number(temp);
+        const rh = Number(humidity);
+        const wind = Number(windMph);
+        if (!Number.isFinite(t)) return "--";
 
-      async function getText(url, options = {}) {
-        const response = await fetch(url, { cache: "no-store", ...options });
-        if (!response.ok) throw new Error(`Feed did not respond: ${response.status}`);
-        return response.text();
+        if (t >= 80 && Number.isFinite(rh) && rh >= 40) {
+          const hi = -42.379 + 2.04901523 * t + 10.14333127 * rh - 0.22475541 * t * rh - 0.00683783 * t * t - 0.05481717 * rh * rh + 0.00122874 * t * t * rh + 0.00085282 * t * rh * rh - 0.00000199 * t * t * rh * rh;
+          return round(hi);
+        }
+
+        if (t <= 50 && wind > 3) {
+          const wc = 35.74 + 0.6215 * t - 35.75 * Math.pow(wind, 0.16) + 0.4275 * t * Math.pow(wind, 0.16);
+          return round(wc);
+        }
+
+        return round(t);
       }
 
       function normalizeNwsHourly(periods) {
-        return periods.slice(0, 24).map((period) => ({
-          time: period.startTime,
-          temp: period.temperature,
-          feels: period.temperature,
-          rain: round(period.probabilityOfPrecipitation?.value ?? 0),
-          wind: period.windSpeed || "--",
-          forecast: period.shortForecast,
-        }));
+        return periods.slice(0, 24).map((period) => {
+          const humidity = round(period.relativeHumidity?.value ?? NaN);
+          const windMph = parseWindMph(period.windSpeed);
+          return { time: period.startTime, temp: period.temperature, feels: calculateFeelsLike(period.temperature, humidity, windMph), rain: round(period.probabilityOfPrecipitation?.value ?? 0), wind: period.windSpeed || "--", forecast: period.shortForecast };
+        });
       }
 
       function normalizeNwsDaily(periods) {
         const days = [];
         const daytimePeriods = periods.filter((period) => period.isDaytime);
-
         for (const dayPeriod of daytimePeriods) {
           const dayIndex = periods.indexOf(dayPeriod);
           const nightPeriod = periods.slice(dayIndex + 1).find((period) => !period.isDaytime);
-          days.push({
-            date: formatDayFromDate(dayPeriod.startTime),
-            high: Number.isFinite(dayPeriod.temperature) ? dayPeriod.temperature : "--",
-            low: Number.isFinite(nightPeriod?.temperature) ? nightPeriod.temperature : "--",
-            forecast: dayPeriod.shortForecast || dayPeriod.detailedForecast || "No forecast text",
-          });
+          days.push({ date: formatDayFromDate(dayPeriod.startTime), high: Number.isFinite(dayPeriod.temperature) ? dayPeriod.temperature : "--", low: Number.isFinite(nightPeriod?.temperature) ? nightPeriod.temperature : "--", forecast: dayPeriod.shortForecast || dayPeriod.detailedForecast || "No forecast text" });
         }
-
         return days.slice(0, 7);
       }
 
@@ -516,7 +374,6 @@
         const temp = Number.isFinite(tempC) ? cToF(tempC) : fallbackHour.temp;
         const feels = Number.isFinite(heatIndex) ? cToF(heatIndex) : Number.isFinite(windChill) ? cToF(windChill) : temp;
         const wind = Number.isFinite(windSpeed) ? `${kmhToMph(windSpeed)} mph` : fallbackHour.wind;
-
         els.currentCondition.textContent = current?.textDescription || fallbackHour.forecast;
         els.currentTemp.innerHTML = `${temp}&deg;F`;
         els.currentFeels.innerHTML = `${feels}&deg;F`;
@@ -524,34 +381,9 @@
         els.currentWind.textContent = wind;
       }
 
-      function renderHourly(hours) {
-        els.hourlyBody.innerHTML = hours.map((hour, index) => `
-          <tr class="${index === 0 ? "current-row" : ""}">
-            <td>${formatHour(hour.time)}</td>
-            <td>${hour.temp}&deg;F</td>
-            <td>${hour.feels}&deg;F</td>
-            <td>${hour.rain}%</td>
-            <td>${hour.wind}</td>
-            <td class="forecast-cell">${hour.forecast}</td>
-          </tr>`).join("");
-      }
-
-      function renderDaily(days) {
-        els.dailyTitle.textContent = `Next ${days.length} Days High / Low`;
-        els.dailyBody.innerHTML = days.map((day, index) => `
-          <tr class="${index === 0 ? "current-row" : ""}">
-            <td>${day.date}</td>
-            <td>${day.high}&deg;F</td>
-            <td>${day.low}&deg;F</td>
-            <td class="forecast-cell">${day.forecast}</td>
-          </tr>`).join("");
-      }
-
-      function renderSun(sunData) {
-        const today = sunData?.daily;
-        els.sunriseTime.textContent = formatSunTime(today?.sunrise?.[0]);
-        els.sunsetTime.textContent = formatSunTime(today?.sunset?.[0]);
-      }
+      function renderHourly(hours) { els.hourlyBody.innerHTML = hours.map((hour, index) => `<tr class="${index === 0 ? "current-row" : ""}"><td>${formatHour(hour.time)}</td><td>${hour.temp}&deg;F</td><td>${hour.feels}&deg;F</td><td>${hour.rain}%</td><td>${hour.wind}</td><td class="forecast-cell">${hour.forecast}</td></tr>`).join(""); }
+      function renderDaily(days) { els.dailyTitle.textContent = `Next ${days.length} Days High / Low`; els.dailyBody.innerHTML = days.map((day, index) => `<tr class="${index === 0 ? "current-row" : ""}"><td>${day.date}</td><td>${day.high}&deg;F</td><td>${day.low}&deg;F</td><td class="forecast-cell">${day.forecast}</td></tr>`).join(""); }
+      function renderSun(sunData) { const today = sunData?.daily; els.sunriseTime.textContent = formatSunTime(today?.sunrise?.[0]); els.sunsetTime.textContent = formatSunTime(today?.sunset?.[0]); }
 
       async function loadNews() {
         try {
@@ -559,197 +391,56 @@
           const doc = new DOMParser().parseFromString(rssText, "application/xml");
           const title = doc.querySelector("channel > item > title")?.textContent?.trim();
           els.newsTitle.textContent = title || "No headline available";
-        } catch (error) {
-          console.error(error);
-          els.newsTitle.textContent = "Headline unavailable";
-        }
+        } catch (error) { console.error(error); els.newsTitle.textContent = "Headline unavailable"; }
       }
 
-      function tileCoordinate({ lat, lon, zoom }) {
-        const latRad = (lat * Math.PI) / 180;
-        const scale = 2 ** zoom;
-        return {
-          x: ((lon + 180) / 360) * scale,
-          y: ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * scale,
-        };
-      }
-
-      function radarTileUrl(host, frame, x, y, zoom) {
-        return `${host}${frame.path}/256/${zoom}/${x}/${y}/6/1_1.png?v=${frame.time}`;
-      }
+      function tileCoordinate({ lat, lon, zoom }) { const latRad = (lat * Math.PI) / 180; const scale = 2 ** zoom; return { x: ((lon + 180) / 360) * scale, y: ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * scale }; }
+      function radarTileUrl(host, frame, x, y, zoom) { return `${host}${frame.path}/256/${zoom}/${x}/${y}/6/1_1.png?v=${frame.time}`; }
 
       function buildTileLayer({ className, getUrl, center, radius = 2, tileSize = 256 }) {
         const layer = document.createElement("div");
         layer.className = `tile-layer ${className}`;
-        const tileX = Math.floor(center.x);
-        const tileY = Math.floor(center.y);
-        const layerSize = (radius * 2 + 1) * tileSize;
-        const centerPixelX = radius * tileSize + (center.x - tileX) * tileSize;
-        const centerPixelY = radius * tileSize + (center.y - tileY) * tileSize;
-        layer.style.width = `${layerSize}px`;
-        layer.style.height = `${layerSize}px`;
-        layer.style.transform = `translate(${-centerPixelX}px, ${-centerPixelY}px)`;
-
-        for (let row = -radius; row <= radius; row += 1) {
-          for (let col = -radius; col <= radius; col += 1) {
-            const img = document.createElement("img");
-            img.alt = "";
-            img.decoding = "async";
-            img.src = getUrl(tileX + col, tileY + row);
-            img.style.left = `${(col + radius) * tileSize}px`;
-            img.style.top = `${(row + radius) * tileSize}px`;
-            img.style.width = `${tileSize}px`;
-            img.style.height = `${tileSize}px`;
-            layer.appendChild(img);
-          }
-        }
-
+        const tileX = Math.floor(center.x), tileY = Math.floor(center.y), layerSize = (radius * 2 + 1) * tileSize, centerPixelX = radius * tileSize + (center.x - tileX) * tileSize, centerPixelY = radius * tileSize + (center.y - tileY) * tileSize;
+        layer.style.width = `${layerSize}px`; layer.style.height = `${layerSize}px`; layer.style.transform = `translate(${-centerPixelX}px, ${-centerPixelY}px)`;
+        for (let row = -radius; row <= radius; row += 1) for (let col = -radius; col <= radius; col += 1) { const img = document.createElement("img"); img.alt = ""; img.decoding = "async"; img.src = getUrl(tileX + col, tileY + row); img.style.left = `${(col + radius) * tileSize}px`; img.style.top = `${(row + radius) * tileSize}px`; img.style.width = `${tileSize}px`; img.style.height = `${tileSize}px`; layer.appendChild(img); }
         return layer;
       }
 
-      function setTimelineProgress(progress) {
-        const percent = Math.max(0, Math.min(100, progress * 100));
-        els.timelineDot.style.left = `${percent}%`;
-        els.timelineFill.style.width = `${percent}%`;
-      }
-
-      function setRadarFrame(index) {
-        if (!radarFrames.length) return;
-        radarFrameIndex = index % radarFrames.length;
-        const frame = radarFrames[radarFrameIndex];
-        const date = new Date(frame.time * 1000);
-
-        radarLayers.forEach((layer, layerIndex) => {
-          layer.style.opacity = layerIndex === radarFrameIndex ? "0.94" : "0";
-        });
-
-        els.radarStatus.textContent = `${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} radar`;
-      }
-
-      function animateRadar(time) {
-        if (!radarFrames.length) return;
-        if (!radarAnimationStart) radarAnimationStart = time;
-        const elapsed = (time - radarAnimationStart) % radarCycleMs;
-        const progress = elapsed / radarCycleMs;
-        const frameIndex = Math.min(radarFrames.length - 1, Math.floor(progress * radarFrames.length));
-        setTimelineProgress(progress);
-        if (frameIndex !== radarFrameIndex) setRadarFrame(frameIndex);
-        radarAnimationId = window.requestAnimationFrame(animateRadar);
-      }
-
-      function startRadarLoop() {
-        window.cancelAnimationFrame(radarAnimationId);
-        radarFrameIndex = -1;
-        radarAnimationStart = 0;
-        setTimelineProgress(0);
-        setRadarFrame(0);
-        radarAnimationId = window.requestAnimationFrame(animateRadar);
-      }
+      function setTimelineProgress(progress) { const percent = Math.max(0, Math.min(100, progress * 100)); els.timelineDot.style.left = `${percent}%`; els.timelineFill.style.width = `${percent}%`; }
+      function setRadarFrame(index) { if (!radarFrames.length) return; radarFrameIndex = index % radarFrames.length; const frame = radarFrames[radarFrameIndex]; const date = new Date(frame.time * 1000); radarLayers.forEach((layer, layerIndex) => { layer.style.opacity = layerIndex === radarFrameIndex ? "0.94" : "0"; }); els.radarStatus.textContent = `${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} radar`; }
+      function animateRadar(time) { if (!radarFrames.length) return; if (!radarAnimationStart) radarAnimationStart = time; const elapsed = (time - radarAnimationStart) % radarCycleMs; const progress = elapsed / radarCycleMs; const frameIndex = Math.min(radarFrames.length - 1, Math.floor(progress * radarFrames.length)); setTimelineProgress(progress); if (frameIndex !== radarFrameIndex) setRadarFrame(frameIndex); radarAnimationId = window.requestAnimationFrame(animateRadar); }
+      function startRadarLoop() { window.cancelAnimationFrame(radarAnimationId); radarFrameIndex = -1; radarAnimationStart = 0; setTimelineProgress(0); setRadarFrame(0); radarAnimationId = window.requestAnimationFrame(animateRadar); }
 
       async function loadRadar() {
-        const mapZoom = 10;
-        const radarZoom = 6;
-        const radarTileSize = 256 * 2 ** (mapZoom - radarZoom);
-        const mapCenter = tileCoordinate({ lat: PEKIN.latitude, lon: PEKIN.longitude, zoom: mapZoom });
-        const radarCenter = tileCoordinate({ lat: PEKIN.latitude, lon: PEKIN.longitude, zoom: radarZoom });
+        const mapZoom = 10, radarZoom = 6, radarTileSize = 256 * 2 ** (mapZoom - radarZoom), mapCenter = tileCoordinate({ lat: PEKIN.latitude, lon: PEKIN.longitude, zoom: mapZoom }), radarCenter = tileCoordinate({ lat: PEKIN.latitude, lon: PEKIN.longitude, zoom: radarZoom });
         const radarData = await getJson("https://api.rainviewer.com/public/weather-maps.json");
-        const pastFrames = (radarData.radar?.past || []).slice(-8);
-        const nowcastFrames = (radarData.radar?.nowcast || []).slice(0, 16);
-        const frames = [...pastFrames, ...nowcastFrames].slice(0, 24);
-
-        if (!frames.length) {
-          els.radarStart.textContent = "--";
-          els.radarEnd.textContent = "--";
-          els.radarStatus.textContent = "Radar unavailable";
-          return;
-        }
-
-        radarFrames = frames;
-        els.radarMap.innerHTML = "";
-
-        const baseLayer = buildTileLayer({
-          className: "base-layer",
-          center: mapCenter,
-          radius: 2,
-          tileSize: 256,
-          getUrl: (x, y) => `https://tile.openstreetmap.org/${mapZoom}/${x}/${y}.png`,
-        });
+        const pastFrames = (radarData.radar?.past || []).slice(-8), nowcastFrames = (radarData.radar?.nowcast || []).slice(0, 16), frames = [...pastFrames, ...nowcastFrames].slice(0, 24);
+        if (!frames.length) { els.radarStart.textContent = "--"; els.radarEnd.textContent = "--"; els.radarStatus.textContent = "Radar unavailable"; return; }
+        radarFrames = frames; els.radarMap.innerHTML = "";
+        const baseLayer = buildTileLayer({ className: "base-layer", center: mapCenter, radius: 2, tileSize: 256, getUrl: (x, y) => `https://tile.openstreetmap.org/${mapZoom}/${x}/${y}.png` });
         els.radarMap.appendChild(baseLayer);
-
-        radarLayers = radarFrames.map((frame, index) => {
-          const layer = buildTileLayer({
-            className: "radar-layer",
-            center: radarCenter,
-            radius: 1,
-            tileSize: radarTileSize,
-            getUrl: (x, y) => radarTileUrl(radarData.host, frame, x, y, radarZoom),
-          });
-          layer.style.opacity = index === 0 ? "0.94" : "0";
-          layer.style.zIndex = String(10 + index);
-          els.radarMap.appendChild(layer);
-          return layer;
-        });
-
-        els.radarMap.insertAdjacentHTML(
-          "beforeend",
-          `<div style="position:absolute; left:50%; top:50%; width:9px; height:9px; transform:translate(-50%,-50%); border-radius:999px; background:#e9fff3; box-shadow:0 0 0 5px rgba(66,183,122,.28); z-index:500;" title="Pekin"></div>
-           <div class="map-credit">Roads/cities: OpenStreetMap</div>`,
-        );
-
-        const first = new Date(radarFrames[0].time * 1000);
-        const last = new Date(radarFrames[radarFrames.length - 1].time * 1000);
+        radarLayers = radarFrames.map((frame, index) => { const layer = buildTileLayer({ className: "radar-layer", center: radarCenter, radius: 1, tileSize: radarTileSize, getUrl: (x, y) => radarTileUrl(radarData.host, frame, x, y, radarZoom) }); layer.style.opacity = index === 0 ? "0.94" : "0"; layer.style.zIndex = String(10 + index); els.radarMap.appendChild(layer); return layer; });
+        els.radarMap.insertAdjacentHTML("beforeend", `<div style="position:absolute; left:50%; top:50%; width:9px; height:9px; transform:translate(-50%,-50%); border-radius:999px; background:#e9fff3; box-shadow:0 0 0 5px rgba(66,183,122,.28); z-index:500;" title="Pekin"></div><div class="map-credit">Roads/cities: OpenStreetMap</div>`);
+        const first = new Date(radarFrames[0].time * 1000), last = new Date(radarFrames[radarFrames.length - 1].time * 1000);
         els.radarStart.textContent = first.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
         els.radarEnd.textContent = last.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
         startRadarLoop();
       }
 
       async function loadWeather() {
-        setStatus("Updating weather...");
-        els.refresh.disabled = true;
-
+        setStatus("Updating weather..."); els.refresh.disabled = true;
         try {
-          const point = await getJson(`https://api.weather.gov/points/${PEKIN.latitude},${PEKIN.longitude}`, {
-            headers: { Accept: "application/geo+json" },
-          });
-
-          const sunParams = new URLSearchParams({
-            latitude: PEKIN.latitude,
-            longitude: PEKIN.longitude,
-            timezone: "America/Chicago",
-            forecast_days: "1",
-            daily: "sunrise,sunset",
-          });
-
-          const [hourly, daily, stations, sunData] = await Promise.all([
-            getJson(point.properties.forecastHourly, { headers: { Accept: "application/geo+json" } }),
-            getJson(point.properties.forecast, { headers: { Accept: "application/geo+json" } }),
-            getJson(point.properties.observationStations, { headers: { Accept: "application/geo+json" } }),
-            getJson(`https://api.open-meteo.com/v1/forecast?${sunParams}`),
-          ]);
-
+          const point = await getJson(`https://api.weather.gov/points/${PEKIN.latitude},${PEKIN.longitude}`, { headers: { Accept: "application/geo+json" } });
+          const sunParams = new URLSearchParams({ latitude: PEKIN.latitude, longitude: PEKIN.longitude, timezone: "America/Chicago", forecast_days: "1", daily: "sunrise,sunset" });
+          const [hourly, daily, stations, sunData] = await Promise.all([ getJson(point.properties.forecastHourly, { headers: { Accept: "application/geo+json" } }), getJson(point.properties.forecast, { headers: { Accept: "application/geo+json" } }), getJson(point.properties.observationStations, { headers: { Accept: "application/geo+json" } }), getJson(`https://api.open-meteo.com/v1/forecast?${sunParams}`) ]);
           const stationUrl = stations.features?.[0]?.id;
-          const latestObservation = stationUrl
-            ? await getJson(`${stationUrl}/observations/latest?require_qc=false`, { headers: { Accept: "application/geo+json" } })
-            : null;
-
+          const latestObservation = stationUrl ? await getJson(`${stationUrl}/observations/latest?require_qc=false`, { headers: { Accept: "application/geo+json" } }) : null;
           const hours = normalizeNwsHourly(hourly.properties.periods);
           const days = normalizeNwsDaily(daily.properties.periods);
-
-          renderCurrent(latestObservation?.properties, hours[0]);
-          renderHourly(hours);
-          renderDaily(days);
-          renderSun(sunData);
-          await Promise.allSettled([loadRadar(), loadNews()]);
-
-          const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-          els.lastUpdated.textContent = `Last updated: ${time}`;
-          setStatus("");
-        } catch (error) {
-          console.error(error);
-          setStatus("Could not load the weather feed. Check your connection and refresh the page.", true);
-        } finally {
-          els.refresh.disabled = false;
-        }
+          renderCurrent(latestObservation?.properties, hours[0]); renderHourly(hours); renderDaily(days); renderSun(sunData); await Promise.allSettled([loadRadar(), loadNews()]);
+          const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); els.lastUpdated.textContent = `Last updated: ${time}`; setStatus("");
+        } catch (error) { console.error(error); setStatus("Could not load the weather feed. Check your connection and refresh the page.", true); }
+        finally { els.refresh.disabled = false; }
       }
 
       els.refresh.addEventListener("click", loadWeather);
