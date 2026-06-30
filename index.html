@@ -140,7 +140,7 @@
       async function getJson(url, options = {}) { const response = await fetch(url, { cache: "no-store", ...options }); if (!response.ok) throw new Error(`Weather service did not respond: ${response.status}`); return response.json(); }
       async function getText(url, options = {}) { const response = await fetch(url, { cache: "no-store", ...options }); if (!response.ok) throw new Error(`Feed did not respond: ${response.status}`); return response.text(); }
 
-      function tempClass(value) { const temp = Number(value); if (!Number.isFinite(temp)) return ""; if (temp > 100) return "temp-hot"; if (temp > 90) return "temp-warm"; return ""; }
+      function tempClass(value) { const temp = Number(value); if (!Number.isFinite(temp)) return ""; if (temp >= 100) return "temp-hot"; if (temp >= 90) return "temp-warm"; return ""; }
       function tempHtml(value) { const cls = tempClass(value); return `<span class="${cls}">${value}&deg;F</span>`; }
       function applyTempClass(el, value) { el.classList.remove("temp-warm", "temp-hot"); const cls = tempClass(value); if (cls) el.classList.add(cls); }
 
