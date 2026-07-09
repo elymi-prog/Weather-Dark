@@ -83,9 +83,9 @@
       .radar-status { display: none; }
       .map-credit { position: absolute; right: 10px; bottom: 10px; z-index: 520; padding: 3px 6px; border-radius: 6px; background: rgba(7, 13, 11, 0.72); color: #9fb3aa; font-size: 0.7rem; font-weight: 700; }
 
-      .riddle-card { min-height: 56px; padding: 8px 12px; display: grid; gap: 3px; background: rgba(17, 31, 26, 0.94); }
+      .riddle-card { min-height: 56px; padding: 8px 12px; display: grid; gap: 5px; background: rgba(17, 31, 26, 0.94); }
       .riddle-label { color: var(--muted); font-size: 0.76rem; font-weight: 850; text-transform: uppercase; letter-spacing: 0.03em; }
-      .riddle-question { color: #ffffff; font-size: 0.94rem; font-weight: 850; line-height: 1.12; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+      .riddle-question { color: #ffffff; font-family: "Courier New", ui-monospace, SFMono-Regular, Consolas, monospace; font-size: clamp(0.5rem, 0.72vw, 0.78rem); font-weight: 850; line-height: 1.05; overflow-x: auto; white-space: pre; display: block; }
       .riddle-answer { color: #dff8eb; font-size: 0.84rem; font-weight: 800; line-height: 1.08; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
       .riddle-answer span { color: var(--muted); }
 
@@ -94,7 +94,7 @@
       .error { color: var(--warn); }
 
       @media (max-width: 1260px) { body { overflow: auto; height: auto; } .page { height: auto; display: block; } .layout { grid-template-columns: 1fr; } .current { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-      @media (max-width: 720px) { .page { width: min(100% - 14px, 1880px); padding-top: 8px; } .topbar { grid-template-columns: 1fr; } .actions { justify-content: flex-start; text-align: left; } .current { grid-template-columns: 1fr; } .panel { padding: 9px; overflow-x: auto; } th, td { padding: 6px 8px; font-size: 0.9rem; } .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.95rem; } .riddle-question { font-size: 0.95rem; -webkit-line-clamp: 2; } }
+      @media (max-width: 720px) { .page { width: min(100% - 14px, 1880px); padding-top: 8px; } .topbar { grid-template-columns: 1fr; } .actions { justify-content: flex-start; text-align: left; } .current { grid-template-columns: 1fr; } .panel { padding: 9px; overflow-x: auto; } th, td { padding: 6px 8px; font-size: 0.9rem; } .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.95rem; } .riddle-question { font-size: 0.55rem; } }
     </style>
   </head>
   <body>
@@ -174,17 +174,45 @@
       function renderSun(sunData) { const today = sunData?.daily; els.sunriseTime.textContent = formatSunTime(today?.sunrise?.[0]); els.sunsetTime.textContent = formatSunTime(today?.sunset?.[0]); }
 
       function getDayIndex(length, offset = 0) { const today = new Date(); const start = new Date(today.getFullYear(), 0, 0); const day = Math.floor((today - start) / 86400000); return ((day + offset) % length + length) % length; }
+      function wrapCowsayText(message, maxWidth = 42) {
+        const words = String(message || "No riddle available").replace(/\s+/g, " ").trim().split(" ");
+        const lines = [];
+        let line = "";
+        for (const word of words) {
+          if (word.length > maxWidth) {
+            if (line) { lines.push(line); line = ""; }
+            for (let i = 0; i < word.length; i += maxWidth) lines.push(word.slice(i, i + maxWidth));
+          } else if (!line) line = word;
+          else if (`${line} ${word}`.length <= maxWidth) line += ` ${word}`;
+          else { lines.push(line); line = word; }
+        }
+        if (line) lines.push(line);
+        return lines.length ? lines : ["No riddle available"];
+      }
+      function renderCowsay(message) {
+        const lines = wrapCowsayText(message);
+        const widest = Math.max(...lines.map((line) => line.length));
+        const top = ` ${"_".repeat(widest + 2)}`;
+        const bottom = ` ${"-".repeat(widest + 2)}`;
+        const bubble = lines.map((line, index) => {
+          const padded = line.padEnd(widest, " ");
+          const left = lines.length === 1 ? "<" : index === 0 ? "/" : index === lines.length - 1 ? "\\" : "|";
+          const right = lines.length === 1 ? ">" : index === 0 ? "\\" : index === lines.length - 1 ? "/" : "|";
+          return `${left} ${padded} ${right}`;
+        }).join("\n");
+        return `${top}\n${bubble}\n${bottom}\n         \\   ^__^\n          \\  (oo)\\_______\n             (__)\\       )\\/\\\n                 ||----w |\n                 ||     ||`;
+      }
       async function loadRiddle() {
         try {
           const riddles = await getJson("./riddles.json");
           if (!Array.isArray(riddles) || !riddles.length) throw new Error("No riddles found");
           const today = riddles[getDayIndex(riddles.length)];
           const yesterday = riddles[getDayIndex(riddles.length, -1)];
-          els.riddleQuestion.textContent = today.question || "No riddle available";
+          els.riddleQuestion.textContent = renderCowsay(today.question || "No riddle available");
           els.riddleAnswer.innerHTML = `<span>Yesterday:</span> ${yesterday.answer || "No answer available"}`;
         } catch (error) {
           console.error(error);
-          els.riddleQuestion.textContent = "Riddle unavailable";
+          els.riddleQuestion.textContent = renderCowsay("Riddle unavailable");
           els.riddleAnswer.innerHTML = "<span>Yesterday:</span> --";
         }
       }
