@@ -154,6 +154,69 @@
       @media (max-width:1100px) { .layout { grid-template-columns:1fr; } .table-scroll { max-height:520px; } .side { grid-template-columns:1fr; } }
       @media (max-width:640px) { .page { width:calc(100% - 28px); padding:22px 0; gap:16px; } .topbar { grid-template-columns:1fr; gap:18px; } .actions { justify-content:space-between; text-align:right; } .current { grid-template-columns:repeat(3,minmax(0,1fr)); padding:20px; gap:22px 12px; } .hero-reading { grid-column:1 / -1; grid-row:auto; } .metric { padding:0; border:0; } .metric strong { font-size:1.15rem; } .metric span { font-size:.6rem; } .weather-summary { grid-column:1 / -1; font-size:.88rem; } .panel { padding:16px; overflow:visible; } .panel-header { gap:8px; } .panel-header span { font-size:.65rem; } .sun-row { gap:12px; flex-wrap:wrap; } .riddle-question { font-size:.6rem; } .layout,.side { gap:16px; } }
       @media (prefers-reduced-motion:reduce) { .radar-layer { transition:none; } }
+
+      /* Common-area display: all sections stay visible at Full HD. */
+      .hourly-tables { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; min-height:0; }
+      .riddle-line { display:flex; align-items:center; justify-content:space-between; gap:24px; font-size:1rem; line-height:1.4; padding:8px 2px; }
+      .riddle-today { display:flex; align-items:baseline; gap:12px; min-width:0; }
+      .riddle-label { white-space:nowrap; color:#8bd8ae; }
+      .riddle-yesterday { flex-shrink:0; color:#bbd7c6; }
+      .riddle-yesterday span { color:var(--muted); }
+      @media (min-width:1400px) and (min-height:800px) {
+        body { height:100dvh; }
+        .page { width:calc(100% - 32px); height:100dvh; padding:14px 0 10px; gap:10px; display:flex; }
+        .topbar { flex:none; }
+        h1 { font-size:2.1rem; line-height:1.05; }
+        .eyebrow { margin:0 0 4px; font-size:.65rem; }
+        .location-note { margin:5px 0 0; font-size:.8rem; }
+        .actions { font-size:.8rem; }
+        .current { flex:none; grid-template-columns:1.4fr .7fr .7fr 1fr 2.4fr; gap:20px; padding:12px 22px; }
+        .hero-reading { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:2px 16px; grid-row:auto; }
+        .hero-reading .label { grid-column:1 / -1; font-size:.65rem; }
+        #current-temp { font-size:3.6rem; grid-row:2 / 4; line-height:1; }
+        #current-condition { margin:0; font-size:1.05rem; }
+        #current-source { margin:0; font-size:.65rem; line-height:1.3; }
+        .weather-summary { grid-column:auto; font-size:1rem; line-height:1.4; }
+        .metric strong { font-size:1.7rem; margin-top:6px; }
+        .layout { flex:1; min-height:0; grid-template-columns:minmax(0,1.7fr) minmax(0,1fr); gap:12px; align-items:stretch; }
+        .panel { padding:12px 14px; border-radius:12px; min-height:0; }
+        .panel-header { margin-bottom:10px; flex:none; }
+        h2 { font-size:1.1rem; }
+        .hourly-panel { display:flex; flex-direction:column; }
+        .hourly-tables { flex:1; gap:14px; }
+        .table-scroll { max-height:none; overflow:visible; min-height:0; }
+        table { height:100%; table-layout:fixed; }
+        th,td { font-size:clamp(.85rem, .87vw, 1.15rem); padding:5px 6px; line-height:1.2; }
+        th { font-size:.7rem; height:27px; position:static; }
+        .hourly-tables th:nth-child(1) { width:18%; }
+        .hourly-tables th:nth-child(2), .hourly-tables th:nth-child(3) { width:10%; }
+        .hourly-tables th:nth-child(4) { width:10%; }
+        .hourly-tables th:nth-child(5) { width:18%; }
+        .forecast-cell { min-width:0; overflow-wrap:anywhere; font-size:.9rem; }
+        .side { display:grid; grid-template-rows:auto auto minmax(0,1fr); gap:10px; }
+        .side table { height:auto; }
+        .side th:nth-child(1) { width:21%; }
+        .side th:nth-child(2), .side th:nth-child(3) { width:12%; }
+        .side td { padding:8px 7px; }
+        .side .forecast-cell { font-size:.95rem; }
+        .feed-note { margin:7px 0 0; font-size:.65rem; line-height:1.2; }
+        .sun-row { min-height:0; padding:8px 12px; font-size:.95rem; border-radius:10px; }
+        .side section[aria-labelledby="graph-title"] { display:flex; flex-direction:column; }
+        .chart-wrap { flex:1; height:auto; min-height:80px; }
+        .radar-timeline { margin:0 0 10px; font-size:.7rem; }
+        .radar-controls { flex:none; margin-top:8px; gap:8px; }
+        .radar-controls button { min-height:28px; border-radius:7px; font-size:.7rem; }
+        .radar-status { margin:6px 0 0; font-size:.7rem; }
+        .status { flex:none; font-size:.7rem; line-height:1.2; }
+        .riddle-line { flex:none; padding:5px 2px; font-size:1.05rem; gap:32px; }
+        .riddle-today { flex:1; }
+        .footer { flex:none; font-size:.6rem; line-height:1; }
+        .alerts { flex:none; display:flex; gap:8px; }
+        .alert-card { flex:1; min-width:0; padding:8px 12px; border-radius:8px; font-size:.8rem; }
+        .alert-card summary { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .alert-card[open] p { position:fixed; z-index:1000; top:90px; left:10%; width:80%; max-height:50vh; overflow:auto; padding:24px; background:#382b17; border:1px solid #8a6d36; border-radius:12px; box-shadow:0 20px 100px #000b; }
+      }
+      @media (max-width:1399px) { .hourly-tables { grid-template-columns:1fr; } .riddle-line { flex-wrap:wrap; } .riddle-today { flex-wrap:wrap; } .riddle-yesterday { flex-shrink:1; } }
     </style>
   </head>
   <body>
@@ -174,14 +237,15 @@
       <p id="status" class="status" role="status" aria-live="polite"></p>
 
       <section class="layout">
-        <section class="panel card" aria-labelledby="hourly-title"><div class="panel-header"><h2 id="hourly-title">Next 24 Hours</h2><span>Hourly forecast</span></div><div class="table-scroll" role="region" aria-label="Scrollable forecast" tabindex="0"><table><thead><tr><th>Time</th><th>Temp</th><th>Feels Like</th><th>Rain Chance</th><th>Wind</th><th>Forecast</th></tr></thead><tbody id="hourly-body"><tr><td colspan="6">Loading hourly forecast...</td></tr></tbody></table></div><p class="feed-note" data-feed="hourly">Source: National Weather Service</p></section>
+        <section class="panel card hourly-panel" aria-labelledby="hourly-title"><div class="panel-header"><h2 id="hourly-title">Next 24 Hours</h2><span>Read down, then across · Rain chance in %</span></div><div class="hourly-tables"><div class="table-scroll" role="region" aria-label="First 12 hours"><table><thead><tr><th>Time</th><th>Temp</th><th>Feels</th><th>Rain</th><th>Wind</th><th>Forecast</th></tr></thead><tbody id="hourly-body"><tr><td colspan="6">Loading hourly forecast…</td></tr></tbody></table></div><div class="table-scroll" role="region" aria-label="Following 12 hours"><table><thead><tr><th>Time</th><th>Temp</th><th>Feels</th><th>Rain</th><th>Wind</th><th>Forecast</th></tr></thead><tbody id="hourly-body-later"><tr><td colspan="6">Loading hourly forecast…</td></tr></tbody></table></div></div><p class="feed-note" data-feed="hourly">Source: National Weather Service</p></section>
         <div class="side">
           <section class="panel card" aria-labelledby="daily-title"><div class="panel-header"><h2 id="daily-title">Next 7 Days High / Low</h2><span>NWS daily outlook</span></div><div class="table-scroll" role="region" aria-label="Scrollable forecast" tabindex="0"><table><thead><tr><th>Date</th><th>High</th><th>Low</th><th>Forecast</th></tr></thead><tbody id="daily-body"><tr><td colspan="4">Loading daily forecast...</td></tr></tbody></table></div><p class="feed-note" data-feed="daily">Source: National Weather Service</p></section>
           <section class="sun-row card" aria-label="Sunrise and sunset"><span>Sunrise: <strong id="sunrise-time">--</strong></span><span class="sun-divider">-</span><span>Sunset: <strong id="sunset-time">--</strong></span></section>
           <section class="panel card" aria-labelledby="graph-title"><div class="panel-header"><h2 id="graph-title">Radar Loop</h2></div><div class="radar-timeline" aria-label="Radar loop timeline"><span id="radar-start">--</span><div class="timeline-track"><div id="timeline-fill" class="timeline-fill"></div><div id="timeline-dot" class="timeline-dot"></div></div><span id="radar-end">--</span></div><div class="chart-wrap radar-frame"><div id="radar-map" class="radar-map" aria-label="Animated weather radar for Pekin"></div></div><div class="radar-controls"><button id="radar-play" type="button" disabled>Pause</button><input id="radar-scrub" class="radar-scrub" type="range" min="0" max="0" value="0" aria-label="Radar frame" disabled><button id="radar-latest" type="button" disabled>Latest</button></div><p id="radar-status" class="radar-status">Loading radar…</p></section>
-          <section class="riddle-card card" aria-label="Riddle of the day"><div class="riddle-label">Riddle of the Day</div><div id="riddle-question" class="riddle-question">Loading riddle...</div><details class="answer-reveal"><summary>Reveal today’s answer</summary><p id="today-answer">Loading…</p></details><div id="riddle-answer" class="riddle-answer"><span>Yesterday:</span> --</div></section>
+
         </div>
       </section>
+<section class="riddle-line" aria-label="Daily riddle"><div class="riddle-today"><span class="riddle-label">Today’s riddle</span><span id="riddle-question">Loading riddle…</span></div><div id="riddle-answer" class="riddle-yesterday">Yesterday’s answer: --</div></section>
 <footer class="footer"><span>Weather: <a href="https://www.weather.gov/ilx/">NWS Lincoln</a> · Sun: Open-Meteo · Radar: RainViewer</span><span>Made for Pekin. Updated every 5 minutes.</span></footer>
     </main>
 
@@ -233,52 +297,27 @@
         els.currentWind.textContent = wind;
       }
 
-      function renderHourly(hours) { els.hourlyBody.innerHTML = hours.map((hour, index) => `<tr class="${index === 0 ? "current-row" : ""}"><td>${formatHour(hour.time)}</td><td>${tempHtml(hour.temp)}</td><td>${tempHtml(hour.feels)}</td><td>${hour.rain}%</td><td>${escapeHtml(hour.wind)}</td><td class="forecast-cell">${escapeHtml(hour.forecast)}</td></tr>`).join(""); }
+      function renderHourly(hours) {
+        const row = (hour, index) => `<tr class="${index === 0 ? "current-row" : ""}"><td>${formatHour(hour.time)}</td><td>${tempHtml(hour.temp)}</td><td>${tempHtml(hour.feels)}</td><td>${hour.rain}%</td><td>${escapeHtml(hour.wind)}</td><td class="forecast-cell">${escapeHtml(hour.forecast)}</td></tr>`;
+        els.hourlyBody.innerHTML = hours.slice(0, 12).map(row).join("");
+        document.querySelector("#hourly-body-later").innerHTML = hours.slice(12).map((hour, index) => row(hour, index + 12)).join("");
+      }
       function renderDaily(days) { els.dailyTitle.textContent = `Next ${days.length} Days High / Low`; els.dailyBody.innerHTML = days.map((day, index) => `<tr class="${index === 0 ? "current-row" : ""}"><td>${day.date}</td><td>${tempHtml(day.high)}</td><td>${tempHtml(day.low)}</td><td class="forecast-cell">${escapeHtml(day.forecast)}</td></tr>`).join(""); }
       function renderSun(sunData) { const today = sunData?.daily; els.sunriseTime.textContent = formatSunTime(today?.sunrise?.[0]); els.sunsetTime.textContent = formatSunTime(today?.sunset?.[0]); }
 
       function getDayIndex(length, offset = 0) { const today = new Date(); const start = new Date(today.getFullYear(), 0, 0); const day = Math.floor((today - start) / 86400000); return ((day + offset) % length + length) % length; }
-      function wrapCowsayText(message, maxWidth = 42) {
-        const words = String(message || "No riddle available").replace(/\s+/g, " ").trim().split(" ");
-        const lines = [];
-        let line = "";
-        for (const word of words) {
-          if (word.length > maxWidth) {
-            if (line) { lines.push(line); line = ""; }
-            for (let i = 0; i < word.length; i += maxWidth) lines.push(word.slice(i, i + maxWidth));
-          } else if (!line) line = word;
-          else if (`${line} ${word}`.length <= maxWidth) line += ` ${word}`;
-          else { lines.push(line); line = word; }
-        }
-        if (line) lines.push(line);
-        return lines.length ? lines : ["No riddle available"];
-      }
-      function renderCowsay(message) {
-        const lines = wrapCowsayText(message);
-        const widest = Math.max(...lines.map((line) => line.length));
-        const top = ` ${"_".repeat(widest + 2)}`;
-        const bottom = ` ${"-".repeat(widest + 2)}`;
-        const bubble = lines.map((line, index) => {
-          const padded = line.padEnd(widest, " ");
-          const left = lines.length === 1 ? "<" : index === 0 ? "/" : index === lines.length - 1 ? "\\" : "|";
-          const right = lines.length === 1 ? ">" : index === 0 ? "\\" : index === lines.length - 1 ? "/" : "|";
-          return `${left} ${padded} ${right}`;
-        }).join("\n");
-        return `${top}\n${bubble}\n${bottom}\n         \\   ^__^\n          \\  (oo)\\_______\n             (__)\\       )\\/\\\n                 ||----w |\n                 ||     ||`;
-      }
       async function loadRiddle() {
         try {
           const riddles = await getJson("./riddles.json");
           if (!Array.isArray(riddles) || !riddles.length) throw new Error("No riddles found");
           const today = riddles[getDayIndex(riddles.length)];
           const yesterday = riddles[getDayIndex(riddles.length, -1)];
-          els.riddleQuestion.textContent = renderCowsay(today.question || "No riddle available");
-          document.querySelector("#today-answer").textContent = today.answer || "No answer available";
-          els.riddleAnswer.innerHTML = `<span>Yesterday:</span> ${escapeHtml(yesterday.answer || "No answer available")}`;
+          els.riddleQuestion.textContent = today.question || "No riddle available";
+          els.riddleAnswer.innerHTML = `<span>Yesterday’s answer:</span> ${escapeHtml(yesterday.answer || "No answer available")}`;
         } catch (error) {
           console.error(error);
-          els.riddleQuestion.textContent = renderCowsay("Riddle unavailable"); document.querySelector("#today-answer").textContent = "Try refreshing later.";
-          els.riddleAnswer.innerHTML = "<span>Yesterday:</span> --";
+          els.riddleQuestion.textContent = "Riddle unavailable. Try refreshing later.";
+          els.riddleAnswer.innerHTML = "<span>Yesterday’s answer:</span> --";
         }
       }
 
@@ -327,8 +366,8 @@
               if (!hours.length) throw new Error("Empty hourly forecast");
               lastHours = hours; renderHourly(hours); renderCurrent(lastObservation, hours[0]); updateSummary();
               feedTimes.hourly = formatters.sun.format(new Date());
-              feedNote("hourly", `NWS · Updated ${feedTimes.hourly} CT · Scroll for all 24 hours`);
-            } catch (error) { feedNote("hourly", feedTimes.hourly ? `Update failed · Showing forecast from ${feedTimes.hourly} CT` : "Hourly forecast unavailable · Try Refresh Now"); if (!lastHours.length) { els.hourlyBody.innerHTML = '<tr><td colspan="6">Hourly forecast unavailable.</td></tr>'; updateSummary(); } throw error; }
+              feedNote("hourly", `NWS · Updated ${feedTimes.hourly} CT · All 24 hours shown`);
+            } catch (error) { feedNote("hourly", feedTimes.hourly ? `Update failed · Showing forecast from ${feedTimes.hourly} CT` : "Hourly forecast unavailable · Try Refresh Now"); if (!lastHours.length) { els.hourlyBody.innerHTML = '<tr><td colspan="6">Hourly forecast unavailable.</td></tr>'; document.querySelector("#hourly-body-later").innerHTML = '<tr><td colspan="6">Try Refresh Now.</td></tr>'; updateSummary(); } throw error; }
           }),
           section("daily forecast", async () => {
             try { const meta = await point; const data = await getJson(meta.properties.forecast, { headers }); const days = normalizeNwsDaily(data.properties.periods); if (!days.length) throw new Error("Empty daily forecast"); renderDaily(days); feedTimes.daily = formatters.sun.format(new Date()); feedNote("daily", `NWS · Updated ${feedTimes.daily} CT`); }
