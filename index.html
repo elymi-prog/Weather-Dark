@@ -95,6 +95,26 @@
 
       @media (max-width: 1260px) { body { overflow: auto; height: auto; } .page { height: auto; display: block; } .layout { grid-template-columns: 1fr; } .current { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       @media (max-width: 720px) { .page { width: min(100% - 14px, 1880px); padding-top: 8px; } .topbar { grid-template-columns: 1fr; } .actions { justify-content: flex-start; text-align: left; } .current { grid-template-columns: 1fr; } .panel { padding: 9px; overflow-x: auto; } th, td { padding: 6px 8px; font-size: 0.9rem; } .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.95rem; } .riddle-question { font-size: 0.55rem; } }
+
+      /* NFL scoreboard stays separate from the weather refresh cycle. */
+      .nfl-board { flex: 0 0 auto; margin-bottom: 6px; padding: 8px; min-width: 0; }
+      .nfl-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 6px; }
+      .nfl-header h2 { font-size: 1rem; }
+      .nfl-header a, .nfl-status { color: var(--muted); font-size: .78rem; }
+      .nfl-status { margin-left: auto; }
+      .nfl-status.error { color: var(--warn); }
+      .nfl-games { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+      .nfl-game { flex: 0 0 180px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel-soft); }
+      .nfl-game.is-live { border-color: var(--green); }
+      .nfl-game-status { color: var(--muted); font-size: .75rem; margin-bottom: 5px; }
+      .nfl-game.is-live .nfl-game-status { color: #b8f2d0; font-weight: 800; }
+      .nfl-team { display: flex; justify-content: space-between; gap: 12px; font-size: .9rem; line-height: 1.4; }
+      .nfl-score { font-variant-numeric: tabular-nums; }
+      .nfl-empty { margin: 0; color: var(--muted); font-size: .85rem; }
+      @media (max-width: 720px), (max-height: 800px) {
+        body { height: auto; overflow: auto; }
+        .page { height: auto; min-height: 100vh; }
+      }
     </style>
   </head>
   <body>
@@ -110,6 +130,18 @@
         <div class="metric"><span>Feels Like</span><strong id="current-feels">--&deg;F</strong></div>
         <div class="metric"><span>Humidity</span><strong id="current-humidity">--%</strong></div>
         <div class="metric"><span>Wind</span><strong id="current-wind">-- mph</strong></div>
+      </section>
+
+
+      <section class="nfl-board card" aria-labelledby="nfl-title">
+        <div class="nfl-header">
+          <h2 id="nfl-title">NFL Scoreboard</h2>
+          <a href="https://www.espn.com/nfl/scoreboard" target="_blank" rel="noopener noreferrer">Scores by ESPN</a>
+          <span id="nfl-status" class="nfl-status" role="status">Loading scores…</span>
+        </div>
+        <div id="nfl-games" class="nfl-games" tabindex="0" aria-label="NFL games; scroll for more">
+          <p class="nfl-empty">Loading NFL games…</p>
+        </div>
       </section>
 
       <section class="layout">
@@ -230,6 +262,128 @@
       els.refresh.addEventListener("click", loadWeather);
       setInterval(loadWeather, 5 * 60 * 1000);
       loadWeather();
+    </script>
+
+    <script>
+      (() => {
+        const endpoint = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
+        const gamesEl = document.querySelector("#nfl-games");
+        const statusEl = document.querySelector("#nfl-status");
+        const kickoffFormat = new Intl.DateTimeFormat(undefined, {
+          weekday: "short", hour: "numeric", minute: "2-digit", timeZoneName: "short"
+        });
+        let inFlight = false;
+        let lastSuccess = null;
+        let timer;
+
+        function gameStatus(game) {
+          const status = game.status || game.competitions?.[0]?.status || {};
+          const type = status.type || {};
+          if (type.name === "STATUS_HALFTIME") return "HALFTIME";
+          if (type.state === "in") {
+            const period = Number(status.period);
+            if (period > 4) return `OT ${status.displayClock || ""}`.trim();
+            if (period >= 1) return `Q${period} ${status.displayClock || ""}`.trim();
+            return type.shortDetail || type.description || "In progress";
+          }
+          if (type.completed || type.state === "post") return type.shortDetail || "Final";
+          if (type.name && type.name !== "STATUS_SCHEDULED") {
+            return type.shortDetail || type.description || type.name;
+          }
+          const date = new Date(game.date);
+          return Number.isNaN(date.getTime()) ? "Kickoff TBD" : kickoffFormat.format(date);
+        }
+
+        function renderGames(events) {
+          const fragment = document.createDocumentFragment();
+          let count = 0;
+          // Live games appear first; preserve ESPN's order within each group.
+          const ordered = [...events].sort((a, b) =>
+            Number((b.status || b.competitions?.[0]?.status)?.type?.state === "in") -
+            Number((a.status || a.competitions?.[0]?.status)?.type?.state === "in"));
+          for (const game of ordered) {
+            const competition = game.competitions?.[0];
+            const away = competition?.competitors?.find(team => team.homeAway === "away");
+            const home = competition?.competitors?.find(team => team.homeAway === "home");
+            if (!away || !home) continue;
+            const type = (game.status || competition.status)?.type || {};
+            const card = document.createElement("article");
+            card.className = "nfl-game";
+            card.classList.toggle("is-live", type.state === "in");
+            const label = document.createElement("div");
+            label.className = "nfl-game-status";
+            label.textContent = gameStatus(game);
+            card.appendChild(label);
+            for (const [team, location] of [[away, "away"], [home, "home"]]) {
+              const row = document.createElement("div");
+              row.className = "nfl-team";
+              const name = document.createElement("span");
+              name.textContent = team.team?.abbreviation || team.team?.displayName || "TBD";
+              name.title = `${team.team?.displayName || name.textContent} (${location})`;
+              const score = document.createElement("strong");
+              score.className = "nfl-score";
+              score.textContent = type.state === "pre" ? "—" : String(team.score ?? "—");
+              row.append(name, score);
+              card.appendChild(row);
+            }
+            fragment.appendChild(card);
+            count++;
+          }
+          if (!count) {
+            const empty = document.createElement("p");
+            empty.className = "nfl-empty";
+            empty.textContent = "No NFL games scheduled in ESPN's current scoreboard.";
+            fragment.appendChild(empty);
+          }
+          const scroll = gamesEl.scrollLeft;
+          gamesEl.replaceChildren(fragment);
+          gamesEl.scrollLeft = scroll;
+        }
+
+        async function loadScores() {
+          clearTimeout(timer);
+          if (inFlight || document.hidden) return;
+          inFlight = true;
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 10000);
+          try {
+            const response = await fetch(`${endpoint}?_=${Date.now()}`, {
+              cache: "no-store", signal: controller.signal
+            });
+            if (!response.ok) throw new Error("Scoreboard request failed");
+            const data = await response.json();
+            if (!Array.isArray(data.events)) throw new Error("Invalid scoreboard response");
+            renderGames(data.events);
+            lastSuccess = new Date().toLocaleTimeString([], {
+              hour: "numeric", minute: "2-digit", second: "2-digit"
+            });
+            statusEl.textContent = `Updated ${lastSuccess} · Refreshes every 15s`;
+            statusEl.classList.remove("error");
+          } catch (error) {
+            statusEl.classList.add("error");
+            statusEl.textContent = lastSuccess
+              ? `Scores delayed · Last updated ${lastSuccess} · Retrying in 15s`
+              : "ESPN scores unavailable · Retrying in 15s";
+            if (!lastSuccess) {
+              const empty = document.createElement("p");
+              empty.className = "nfl-empty";
+              empty.textContent = "Unable to load NFL games. Check your connection or view scores on ESPN.";
+              gamesEl.replaceChildren(empty);
+            }
+          } finally {
+            clearTimeout(timeout);
+            inFlight = false;
+            if (!document.hidden) timer = setTimeout(loadScores, 15000);
+          }
+        }
+
+        document.addEventListener("visibilitychange", () => {
+          clearTimeout(timer);
+          if (!document.hidden) loadScores();
+        });
+        document.querySelector("#refresh-button").addEventListener("click", loadScores);
+        loadScores();
+      })();
     </script>
   </body>
 </html>
