@@ -237,39 +237,40 @@
       .temp-warm { color:var(--gold)!important; }
       .temp-hot { color:#ff857e!important; }
 
-      /* Full-HD layout: reserve a dedicated right rail for all NFL games. */
+      /* Full-HD layout: fill the entire right rail with the week's NFL games. */
       @media (min-width:1400px) and (min-height:800px) {
-        .page { width:calc(100% - 270px)!important; margin-left:12px!important; margin-right:258px!important; }
+        .page { width:calc(100% - 296px)!important; margin-left:12px!important; margin-right:284px!important; }
         .topbar { grid-template-columns:minmax(0,1fr) auto!important; gap:12px!important; }
         .topbar > div:first-child { grid-column:1!important; }
         .actions { grid-column:2!important; }
         .nfl-ticker {
           position:fixed!important;
-          top:84px;
-          right:10px;
-          bottom:28px;
-          width:236px;
-          display:grid!important;
-          grid-template-columns:1fr!important;
-          grid-template-rows:repeat(16,minmax(0,1fr))!important;
+          top:0!important;
+          right:0!important;
+          bottom:0!important;
+          width:272px!important;
+          height:100dvh!important;
+          display:flex!important;
+          flex-direction:column!important;
           z-index:900;
-          border-radius:12px;
-          overflow:hidden;
+          border-radius:0!important;
+          overflow:hidden!important;
           align-self:stretch!important;
         }
         .nfl-game {
-          min-height:0;
-          padding:6px 9px!important;
+          flex:1 1 0!important;
+          min-height:0!important;
+          padding:10px 14px!important;
           border-right:0!important;
           border-bottom:1px solid #354858!important;
-          display:flex;
-          flex-direction:column;
-          justify-content:center;
+          display:flex!important;
+          flex-direction:column!important;
+          justify-content:center!important;
         }
         .nfl-game:last-child { border-bottom:0!important; }
-        .nfl-matchup { font-size:.8rem!important; line-height:1.05; }
-        .nfl-status { font-size:.62rem!important; line-height:1.05; margin-top:3px; }
-        .nfl-loading { grid-column:1!important; align-self:start; }
+        .nfl-matchup { font-size:1.08rem!important; line-height:1.12!important; letter-spacing:.01em; }
+        .nfl-status { font-size:.82rem!important; line-height:1.12!important; margin-top:5px!important; }
+        .nfl-loading { align-self:flex-start; }
         .layout { grid-template-columns:minmax(0,1.72fr) minmax(0,.98fr)!important; gap:10px!important; }
         .current { gap:10px!important; }
         .hourly-tables { gap:10px!important; }
