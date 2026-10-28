@@ -35,15 +35,18 @@
       }
 
       .page { width: min(1880px, calc(100% - 24px)); height: 100vh; margin: 0 auto; padding: 6px 0; display: flex; flex-direction: column; }
-      .topbar { display: grid; grid-template-columns: 1fr minmax(360px, .9fr) auto; gap: 18px; align-items: start; margin-bottom: 6px; }
+      .topbar { display: grid; grid-template-columns: minmax(280px,.8fr) minmax(680px,1.7fr) auto; gap: 18px; align-items: start; margin-bottom: 6px; }
       h1 { margin: 0; font-size: clamp(1.95rem, 2.35vw, 3rem); line-height: 1; letter-spacing: 0; }
       .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; color: var(--muted); font-size: 0.98rem; text-align: right; }
-      .nfl-ticker { min-width:0; align-self:center; display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:12px; row-gap:2px; padding:10px 14px; border:1px solid #354858; border-radius:12px; background:linear-gradient(105deg,#151d2b,#172730); box-shadow:0 8px 24px #0002; }
-      .nfl-kicker { grid-row:1 / 3; align-self:center; color:#55c1de; font-size:.65rem; font-weight:900; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; }
-      .nfl-main { min-width:0; color:#f7f1e6; font-size:.95rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .nfl-sub { min-width:0; color:#bdc9cf; font-size:.72rem; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .nfl-ticker.live { border-color:#f6d121; background:linear-gradient(105deg,#211d2c,#263025); }
-      .nfl-ticker.live .nfl-kicker { color:#f6d121; }
+      .nfl-ticker { min-width:0; align-self:center; display:flex; align-items:stretch; gap:0; overflow:hidden; padding:0; border:1px solid #354858; border-radius:10px; background:linear-gradient(105deg,#151d2b,#172730); box-shadow:0 8px 24px #0002; }
+      .nfl-game { min-width:0; flex:1 1 0; padding:7px 10px; border-right:1px solid #354858; overflow:hidden; }
+      .nfl-game:last-child { border-right:0; }
+      .nfl-game.bears { background:linear-gradient(180deg,#2b253b,#1b2230); }
+      .nfl-game.live { background:linear-gradient(180deg,#302919,#252a20); box-shadow:inset 0 2px #f6d121; }
+      .nfl-matchup { display:block; color:#f7f1e6; font-size:.82rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .nfl-status { display:block; margin-top:2px; color:#bdc9cf; font-size:.66rem; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .nfl-game.live .nfl-status { color:#f6d121; }
+      .nfl-loading { padding:8px 12px; color:#bdc9cf; font-size:.72rem; font-weight:700; }
 
       button { min-height: 40px; padding: 0 16px; border: 1px solid #b8c7d1; border-radius: 8px; background: #13231d; color: var(--ink); font: inherit; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24); }
       button:hover { border-color: var(--green); color: #b8f2d0; }
@@ -80,7 +83,7 @@
       .radar-timeline { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin: -1px 0 8px; color: var(--muted); font-size: 0.88rem; font-weight: 800; }
       .timeline-track { position: relative; height: 5px; border-radius: 999px; background: #354858; overflow: visible; }
       .timeline-fill { position: absolute; inset: 0 auto 0 0; width: 0%; border-radius: inherit; background: linear-gradient(90deg, #2f8f63, #5be191); }
-      .timeline-dot { position: absolute; left: 0%; top: 50%; width: 15px; height: 15px; border: 2px solid #e9fff3; border-radius: 999px; background: #42b77a; box-shadow: 0 0 0 5px rgba(66, 183, 122, 0.18); transform: translate(-50%, -50%); }
+      .timeline-dot { position: absolute; left: 0%; top: 50%; width: 15px; height: 15px; border: 2px solid #e9fff3; border-radius: 999px; background: #42b77a; box-shadow: 0 0 0 5px rgba(66,183,122,.18); transform: translate(-50%, -50%); }
       .radar-map { width: 100%; height: 100%; display: block; position: relative; border-radius: 6px; overflow: hidden; background: #09110e; }
       .tile-layer { position: absolute; left: 50%; top: 50%; }
       .tile-layer img { position: absolute; }
@@ -99,10 +102,9 @@
       .status { min-height: 18px; margin: 6px 0 0; color: var(--muted); font-size: 0.82rem; font-weight: 700; }
       .error { color: var(--warn); }
 
-      @media (max-width: 1260px) { body { overflow: auto; height: auto; } .page { height: auto; display: block; } .layout { grid-template-columns: 1fr; } .current { grid-template-columns: repeat(2, minmax(0, 1fr)); } .topbar { grid-template-columns:1fr auto; } .nfl-ticker { grid-column:1 / -1; grid-row:2; } }
+      @media (max-width: 1260px) { body { overflow: auto; height: auto; } .page { height: auto; display: block; } .layout { grid-template-columns: 1fr; } .current { grid-template-columns: repeat(2, minmax(0, 1fr)); } .topbar { grid-template-columns:1fr auto; } .nfl-ticker { grid-column:1 / -1; grid-row:2; overflow-x:auto; } .nfl-game { min-width:120px; } }
       @media (max-width: 720px) { .page { width: min(100% - 14px, 1880px); padding-top: 8px; } .topbar { grid-template-columns: 1fr; } .actions { justify-content: flex-start; text-align: left; } .current { grid-template-columns: 1fr; } .panel { padding: 9px; overflow-x: auto; } th, td { padding: 6px 8px; font-size: 0.9rem; } .sun-row { flex-wrap: wrap; gap: 6px; font-size: 0.95rem; } .riddle-question { font-size: 0.55rem; } }
 
-      /* Spacious, responsive dashboard */
       body { height:auto; overflow:auto; background:radial-gradient(ellipse at 15% 0%, #25324b 0, #101722 42%, #0b1019 85%); }
       .page { width:min(1560px, calc(100% - 48px)); height:auto; padding:36px 0 20px; gap:20px; }
       .topbar { align-items:center; margin:0; }
@@ -142,12 +144,6 @@
       .radar-controls button { font-size:.8rem; min-height:38px; padding:0 12px; }
       .radar-status { display:block; font-size:.8rem; color:var(--muted); margin:12px 0 0; }
       .radar-scrub { flex:1; min-width:80px; accent-color:#7edca3; }
-      .riddle-card { padding:20px; gap:14px; }
-      .riddle-question { font-size:clamp(.6rem,.9vw,.8rem); line-height:1.3; }
-      .riddle-answer { white-space:normal; line-height:1.5; font-weight:500; }
-      .answer-reveal { color:#a8dabd; font-size:.85rem; }
-      .answer-reveal summary { cursor:pointer; padding:5px 0; }
-      .answer-reveal p { color:var(--ink); }
       .alerts:empty { display:none; }
       .alerts { display:grid; gap:12px; }
       .alert-card { padding:18px 22px; background:#382b17; border:1px solid #8a6d36; border-radius:14px; }
@@ -161,7 +157,6 @@
       @media (max-width:640px) { .page { width:calc(100% - 28px); padding:22px 0; gap:16px; } .topbar { grid-template-columns:1fr; gap:18px; } .actions { justify-content:space-between; text-align:right; } .nfl-ticker { grid-column:auto; grid-row:auto; } .current { grid-template-columns:repeat(3,minmax(0,1fr)); padding:20px; gap:22px 12px; } .hero-reading { grid-column:1 / -1; grid-row:auto; } .metric { padding:0; border:0; } .metric strong { font-size:1.15rem; } .metric span { font-size:.6rem; } .weather-summary { grid-column:1 / -1; font-size:.88rem; } .panel { padding:16px; overflow:visible; } .panel-header { gap:8px; } .panel-header span { font-size:.65rem; } .sun-row { gap:12px; flex-wrap:wrap; } .riddle-question { font-size:.6rem; } .layout,.side { gap:16px; } }
       @media (prefers-reduced-motion:reduce) { .radar-layer { transition:none; } }
 
-      /* Common-area display: all sections stay visible at Full HD. */
       .hourly-tables { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; min-height:0; }
       .riddle-line { display:flex; align-items:center; justify-content:space-between; gap:24px; font-size:1rem; line-height:1.4; padding:8px 2px; }
       .riddle-today { display:flex; align-items:baseline; gap:12px; min-width:0; }
@@ -176,9 +171,9 @@
         .eyebrow { margin:0 0 4px; font-size:.65rem; }
         .location-note { margin:5px 0 0; font-size:.8rem; }
         .actions { font-size:.8rem; }
-        .nfl-ticker { padding:7px 12px; border-radius:9px; }
-        .nfl-main { font-size:.9rem; }
-        .nfl-sub { font-size:.66rem; }
+        .nfl-game { padding:6px 8px; }
+        .nfl-matchup { font-size:.78rem; }
+        .nfl-status { font-size:.62rem; }
         .current { flex:none; grid-template-columns:1.4fr .7fr .7fr 1fr 2.4fr; gap:20px; padding:12px 22px; }
         .hero-reading { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:2px 16px; grid-row:auto; }
         .hero-reading .label { grid-column:1 / -1; font-size:.65rem; }
@@ -227,7 +222,6 @@
       }
       @media (max-width:1399px) { .hourly-tables { grid-template-columns:1fr; } .riddle-line { flex-wrap:wrap; } .riddle-today { flex-wrap:wrap; } .riddle-yesterday { flex-shrink:1; } }
 
-      /* Reference palette: teal → sage → lime → gold, with violet accents. */
       :root {
         --purple:#8353f1; --cyan:#55c1de; --sage:#74c2ac; --lime:#a0c870; --citron:#c3cd4a; --gold:#f6d121;
         --display-gradient:linear-gradient(100deg,#00b4bf 0%,#55c1de 15%,#74c2ac 38%,#a0c870 60%,#c3cd4a 78%,#f6d121 100%);
@@ -274,7 +268,7 @@
     <main class="page">
       <header class="topbar">
         <div><p class="eyebrow">Your local forecast</p><h1>Pekin, Illinois</h1><p class="location-note">61554 · All times Central · Temperatures in °F</p></div>
-        <div id="nfl-ticker" class="nfl-ticker" aria-live="polite" aria-label="NFL score tracker"><span id="nfl-kicker" class="nfl-kicker">NFL</span><span id="nfl-main" class="nfl-main">Loading NFL scoreboard…</span><span id="nfl-sub" class="nfl-sub">Live scores and upcoming games</span></div>
+        <div id="nfl-ticker" class="nfl-ticker" aria-live="polite" aria-label="NFL score tracker"><span class="nfl-loading">Loading NFL scoreboard…</span></div>
         <div class="actions"><button id="refresh-button" type="button">Refresh Now</button><div><div>Auto-refresh every 5 minutes</div><div id="last-updated">Last updated: --</div></div></div>
       </header>
 
@@ -304,7 +298,7 @@
     <script>
       const PEKIN = { latitude: 40.5675, longitude: -89.6407 };
 
-      const els = { refresh: document.querySelector("#refresh-button"), lastUpdated: document.querySelector("#last-updated"), currentCondition: document.querySelector("#current-condition"), currentTemp: document.querySelector("#current-temp"), currentFeels: document.querySelector("#current-feels"), currentHumidity: document.querySelector("#current-humidity"), currentWind: document.querySelector("#current-wind"), hourlyBody: document.querySelector("#hourly-body"), dailyTitle: document.querySelector("#daily-title"), dailyBody: document.querySelector("#daily-body"), sunriseTime: document.querySelector("#sunrise-time"), sunsetTime: document.querySelector("#sunset-time"), riddleQuestion: document.querySelector("#riddle-question"), riddleAnswer: document.querySelector("#riddle-answer"), radarMap: document.querySelector("#radar-map"), radarStart: document.querySelector("#radar-start"), radarEnd: document.querySelector("#radar-end"), timelineFill: document.querySelector("#timeline-fill"), timelineDot: document.querySelector("#timeline-dot"), radarStatus: document.querySelector("#radar-status"), status: document.querySelector("#status"), nflTicker: document.querySelector("#nfl-ticker"), nflKicker: document.querySelector("#nfl-kicker"), nflMain: document.querySelector("#nfl-main"), nflSub: document.querySelector("#nfl-sub") };
+      const els = { refresh: document.querySelector("#refresh-button"), lastUpdated: document.querySelector("#last-updated"), currentCondition: document.querySelector("#current-condition"), currentTemp: document.querySelector("#current-temp"), currentFeels: document.querySelector("#current-feels"), currentHumidity: document.querySelector("#current-humidity"), currentWind: document.querySelector("#current-wind"), hourlyBody: document.querySelector("#hourly-body"), dailyTitle: document.querySelector("#daily-title"), dailyBody: document.querySelector("#daily-body"), sunriseTime: document.querySelector("#sunrise-time"), sunsetTime: document.querySelector("#sunset-time"), riddleQuestion: document.querySelector("#riddle-question"), riddleAnswer: document.querySelector("#riddle-answer"), radarMap: document.querySelector("#radar-map"), radarStart: document.querySelector("#radar-start"), radarEnd: document.querySelector("#radar-end"), timelineFill: document.querySelector("#timeline-fill"), timelineDot: document.querySelector("#timeline-dot"), radarStatus: document.querySelector("#radar-status"), status: document.querySelector("#status"), nflTicker: document.querySelector("#nfl-ticker") };
       let radarPlaying = !matchMedia("(prefers-reduced-motion: reduce)").matches;
       let radarLayers = [], radarFrames = [], radarFrameIndex = 0, radarAnimationId, radarAnimationStart = 0;
       const radarCycleMs = 10000;
@@ -384,22 +378,15 @@
         return { event, competition, away, home, state, bears, date: new Date(event.date), detail: statusType.shortDetail || statusType.detail || "" };
       }
       function nflTeamLabel(team) { return team?.team?.abbreviation || team?.team?.shortDisplayName || "--"; }
-      function renderNflGame(game) {
-        if (!game?.away || !game?.home) throw new Error("NFL matchup data incomplete");
+      function nflGameCard(game) {
         const awayName = nflTeamLabel(game.away), homeName = nflTeamLabel(game.home);
-        const awayScore = game.away.score ?? "0", homeScore = game.home.score ?? "0";
-        const isLive = game.state === "in";
-        const isFinal = game.state === "post";
-        els.nflTicker.classList.toggle("live", isLive);
-        els.nflKicker.textContent = isLive ? "NFL LIVE" : game.bears ? "BEARS" : "NFL";
-        if (isLive || isFinal) {
-          els.nflMain.textContent = `${awayName} ${awayScore}  ·  ${homeName} ${homeScore}`;
-          els.nflSub.textContent = isFinal ? "FINAL" : (game.detail || "Game in progress");
-        } else {
-          els.nflMain.textContent = `${awayName} @ ${homeName}`;
-          els.nflSub.textContent = `${formatters.nfl.format(game.date).replace(",", "")} CT${game.bears ? " · Chicago's next game" : ""}`;
-        }
+        const awayScore = game.away?.score ?? "0", homeScore = game.home?.score ?? "0";
+        const isLive = game.state === "in", isFinal = game.state === "post";
+        const matchup = isLive || isFinal ? `${awayName} ${awayScore} @ ${homeName} ${homeScore}` : `${awayName} @ ${homeName}`;
+        const status = isFinal ? "FINAL" : isLive ? (game.detail || "LIVE") : `${formatters.nfl.format(game.date).replace(",", "")} CT`;
+        return `<div class="nfl-game${game.bears ? " bears" : ""}${isLive ? " live" : ""}"><span class="nfl-matchup">${escapeHtml(matchup)}</span><span class="nfl-status">${escapeHtml(status)}</span></div>`;
       }
+      function renderNflGames(games) { els.nflTicker.innerHTML = games.map(nflGameCard).join(""); }
       async function loadNfl() {
         try {
           const data = await getJson(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?_=${Date.now()}`);
@@ -407,15 +394,15 @@
           if (!games.length) throw new Error("No NFL games returned");
           const live = games.filter(game => game.state === "in");
           const upcoming = games.filter(game => game.state === "pre" && game.date >= new Date(Date.now() - 15 * 60 * 1000));
-          const finals = games.filter(game => game.state === "post");
-          const chosen = live.find(game => game.bears) || live[0] || upcoming.find(game => game.bears) || upcoming[0] || finals.findLast(game => game.bears) || finals.at(-1) || games[0];
-          renderNflGame(chosen);
+          const finals = games.filter(game => game.state === "post").sort((a,b) => b.date - a.date);
+          const pool = [...live, ...upcoming, ...finals];
+          let displayGames = pool.slice(0, 7);
+          const bearsGame = pool.find(game => game.bears);
+          if (bearsGame && !displayGames.includes(bearsGame)) displayGames[displayGames.length - 1] = bearsGame;
+          renderNflGames(displayGames.filter(Boolean));
         } catch (error) {
           console.error("NFL scoreboard", error);
-          els.nflTicker.classList.remove("live");
-          els.nflKicker.textContent = "NFL";
-          els.nflMain.textContent = "NFL scoreboard unavailable";
-          els.nflSub.textContent = "Will retry automatically";
+          els.nflTicker.innerHTML = '<span class="nfl-loading">NFL scoreboard unavailable · retrying automatically</span>';
         }
       }
 
@@ -454,45 +441,28 @@
         const failures = [];
         async function section(name, task) { try { await task(); } catch (error) { console.error(name, error); failures.push(name); } }
         const headers = { Accept: "application/geo+json" };
-        // Shared discovery only; each forecast renders as soon as its own request succeeds.
         const point = getJson(`https://api.weather.gov/points/${PEKIN.latitude},${PEKIN.longitude}`, { headers });
         const tasks = [
           section("hourly forecast", async () => {
-            try {
-              const meta = await point; const data = await getJson(meta.properties.forecastHourly, { headers });
-              const hours = normalizeNwsHourly(data.properties.periods);
-              if (!hours.length) throw new Error("Empty hourly forecast");
-              lastHours = hours; renderHourly(hours); renderCurrent(lastObservation, hours[0]); updateSummary();
-              feedTimes.hourly = formatters.sun.format(new Date());
-              feedNote("hourly", `NWS · Updated ${feedTimes.hourly} CT · All 24 hours shown`);
-            } catch (error) { feedNote("hourly", feedTimes.hourly ? `Update failed · Showing forecast from ${feedTimes.hourly} CT` : "Hourly forecast unavailable · Try Refresh Now"); if (!lastHours.length) { els.hourlyBody.innerHTML = '<tr><td colspan="6">Hourly forecast unavailable.</td></tr>'; document.querySelector("#hourly-body-later").innerHTML = '<tr><td colspan="6">Try Refresh Now.</td></tr>'; updateSummary(); } throw error; }
+            try { const meta = await point; const data = await getJson(meta.properties.forecastHourly, { headers }); const hours = normalizeNwsHourly(data.properties.periods); if (!hours.length) throw new Error("Empty hourly forecast"); lastHours = hours; renderHourly(hours); renderCurrent(lastObservation, hours[0]); updateSummary(); feedTimes.hourly = formatters.sun.format(new Date()); feedNote("hourly", `NWS · Updated ${feedTimes.hourly} CT · All 24 hours shown`); }
+            catch (error) { feedNote("hourly", feedTimes.hourly ? `Update failed · Showing forecast from ${feedTimes.hourly} CT` : "Hourly forecast unavailable · Try Refresh Now"); if (!lastHours.length) { els.hourlyBody.innerHTML = '<tr><td colspan="6">Hourly forecast unavailable.</td></tr>'; document.querySelector("#hourly-body-later").innerHTML = '<tr><td colspan="6">Try Refresh Now.</td></tr>'; updateSummary(); } throw error; }
           }),
           section("daily forecast", async () => {
             try { const meta = await point; const data = await getJson(meta.properties.forecast, { headers }); const days = normalizeNwsDaily(data.properties.periods); if (!days.length) throw new Error("Empty daily forecast"); renderDaily(days); feedTimes.daily = formatters.sun.format(new Date()); feedNote("daily", `NWS · Updated ${feedTimes.daily} CT`); }
             catch (error) { feedNote("daily", feedTimes.daily ? `Update failed · Showing forecast from ${feedTimes.daily} CT` : "Daily forecast unavailable · Try Refresh Now"); if (!feedTimes.daily) els.dailyBody.innerHTML = '<tr><td colspan="4">Daily forecast unavailable.</td></tr>'; throw error; }
           }),
           section("current observation", async () => {
-            const meta = await point; const stations = await getJson(meta.properties.observationStations, { headers });
-            const station = stations.features?.[0]?.id; if (!station) throw new Error("No observation station");
-            const observation = await getJson(`${station}/observations/latest?require_qc=false`, { headers });
-            if (!observation.properties.timestamp || Date.now() - new Date(observation.properties.timestamp).getTime() > 2 * 60 * 60 * 1000) throw new Error("Observation is outdated");
-            lastObservation = observation.properties; renderCurrent(lastObservation, lastHours[0]);
+            const meta = await point; const stations = await getJson(meta.properties.observationStations, { headers }); const station = stations.features?.[0]?.id; if (!station) throw new Error("No observation station"); const observation = await getJson(`${station}/observations/latest?require_qc=false`, { headers }); if (!observation.properties.timestamp || Date.now() - new Date(observation.properties.timestamp).getTime() > 2 * 60 * 60 * 1000) throw new Error("Observation is outdated"); lastObservation = observation.properties; renderCurrent(lastObservation, lastHours[0]);
           }),
           section("sunrise and sunset", async () => {
-            const params = new URLSearchParams({ latitude: PEKIN.latitude, longitude: PEKIN.longitude, timezone: "America/Chicago", timeformat: "unixtime", forecast_days: "1", daily: "sunrise,sunset" });
-            const data = await getJson(`https://api.open-meteo.com/v1/forecast?${params}`);
-            els.sunriseTime.textContent = data.daily?.sunrise?.[0] ? formatters.sun.format(new Date(data.daily.sunrise[0] * 1000)) : "--";
-            els.sunsetTime.textContent = data.daily?.sunset?.[0] ? formatters.sun.format(new Date(data.daily.sunset[0] * 1000)) : "--";
+            const params = new URLSearchParams({ latitude: PEKIN.latitude, longitude: PEKIN.longitude, timezone: "America/Chicago", timeformat: "unixtime", forecast_days: "1", daily: "sunrise,sunset" }); const data = await getJson(`https://api.open-meteo.com/v1/forecast?${params}`); els.sunriseTime.textContent = data.daily?.sunrise?.[0] ? formatters.sun.format(new Date(data.daily.sunrise[0] * 1000)) : "--"; els.sunsetTime.textContent = data.daily?.sunset?.[0] ? formatters.sun.format(new Date(data.daily.sunset[0] * 1000)) : "--";
           }),
           section("radar", async () => { try { await loadRadar(); } catch (error) { els.radarStatus.textContent = radarFrames.length ? "Radar update failed · Showing previous loop" : "Radar unavailable · Try Refresh Now"; throw error; } }),
           section("weather alerts", async () => { try { await loadAlerts(); } catch (error) { if (!document.querySelector("#alerts").children.length) document.querySelector("#alerts").textContent = "Weather alerts could not be checked. Check weather.gov for active alerts."; throw error; } }),
           loadRiddle()
         ];
-        try {
-          await Promise.allSettled(tasks);
-          els.lastUpdated.textContent = `Last checked: ${formatters.sun.format(new Date())} CT`;
-          setStatus(failures.length ? `Could not update: ${failures.join(", ")}. Available data remains visible; retry with Refresh Now.` : "All weather feeds updated.", !!failures.length);
-        } finally { els.refresh.disabled = false; }
+        try { await Promise.allSettled(tasks); els.lastUpdated.textContent = `Last checked: ${formatters.sun.format(new Date())} CT`; setStatus(failures.length ? `Could not update: ${failures.join(", ")}. Available data remains visible; retry with Refresh Now.` : "All weather feeds updated.", !!failures.length); }
+        finally { els.refresh.disabled = false; }
       }
       function pauseRadar() { radarPlaying = false; cancelAnimationFrame(radarAnimationId); document.querySelector("#radar-play").textContent = "Play"; }
       document.querySelector("#radar-play").addEventListener("click", () => { if (radarPlaying) pauseRadar(); else { radarPlaying = true; radarAnimationStart = performance.now() - radarFrameIndex / radarFrames.length * radarCycleMs; document.querySelector("#radar-play").textContent = "Pause"; radarAnimationId = requestAnimationFrame(animateRadar); } });
