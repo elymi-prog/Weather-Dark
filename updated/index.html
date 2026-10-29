@@ -35,13 +35,14 @@
       .actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; color:var(--muted); font-size:.98rem; text-align:right; }
       .top-clock { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:clamp(2rem,3vw,3.5rem); line-height:1; font-weight:850; letter-spacing:.04em; color:#f7f1e6; text-shadow:0 0 22px rgba(85,193,222,.18); white-space:nowrap; font-variant-numeric:tabular-nums; pointer-events:none; }
       .nfl-ticker { min-width:0; align-self:center; display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); grid-auto-rows:minmax(0,1fr); overflow:hidden; padding:0; border:1px solid #354858; border-radius:10px; background:linear-gradient(105deg,#151d2b,#172730); box-shadow:0 8px 24px #0002; }
-      .nfl-game { min-width:0; padding:5px 7px; border-right:1px solid #354858; border-bottom:1px solid #354858; overflow:hidden; }
+      .nfl-game { min-width:0; padding:5px 7px; border-right:1px solid #354858; border-bottom:1px solid #354858; overflow:hidden; text-align:center; }
       .nfl-game:nth-child(8n) { border-right:0; }
       .nfl-game:nth-child(n+9) { border-bottom:0; }
       .nfl-game.bears { background:linear-gradient(180deg,#2b253b,#1b2230); }
       .nfl-game.live { background:linear-gradient(180deg,#302919,#252a20); box-shadow:inset 0 2px #f6d121; }
-      .nfl-matchup { display:block; color:#f7f1e6; font-size:.71rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .nfl-status { display:block; margin-top:1px; color:#bdc9cf; font-size:.56rem; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .nfl-matchup { display:block; color:#f7f1e6; font-size:.71rem; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; }
+      .nfl-record { font-size:.82em; font-weight:400; color:#c6d0d5; }
+      .nfl-status { display:block; margin-top:1px; color:#bdc9cf; font-size:.56rem; font-weight:650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; }
       .nfl-game.live .nfl-status { color:#f6d121; }
       .nfl-loading { grid-column:1/-1; padding:8px 12px; color:#bdc9cf; font-size:.72rem; font-weight:700; }
       button { min-height:40px; padding:0 16px; border:1px solid #b8c7d1; border-radius:8px; background:#13231d; color:var(--ink); font:inherit; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.24); }
@@ -268,10 +269,13 @@
           display:flex!important;
           flex-direction:column!important;
           justify-content:center!important;
+          align-items:center!important;
+          text-align:center!important;
         }
         .nfl-game:last-child { border-bottom:0!important; }
-        .nfl-matchup { font-size:1.08rem!important; line-height:1.12!important; letter-spacing:.01em; }
-        .nfl-status { font-size:.82rem!important; line-height:1.12!important; margin-top:5px!important; }
+        .nfl-matchup { font-size:1.08rem!important; line-height:1.12!important; letter-spacing:.01em; text-align:center!important; }
+        .nfl-record { font-size:.78em!important; font-weight:400!important; color:#c6d0d5!important; }
+        .nfl-status { font-size:.82rem!important; line-height:1.12!important; margin-top:5px!important; text-align:center!important; }
         .nfl-loading { align-self:flex-start; }
         .layout { grid-template-columns:minmax(0,1.72fr) minmax(0,.98fr)!important; gap:10px!important; }
         .current { gap:10px!important; }
@@ -333,7 +337,7 @@
       function nflGameInfo(event){const c=event?.competitions?.[0],cs=c?.competitors||[],away=cs.find(t=>t.homeAway==="away"),home=cs.find(t=>t.homeAway==="home"),st=c?.status?.type||event?.status?.type||{},state=st.state||"pre",bears=cs.some(t=>t.team?.abbreviation==="CHI");return{event,competition:c,away,home,state,bears,date:new Date(event.date),detail:st.shortDetail||st.detail||""}}
       function nflTeamLabel(t){return t?.team?.abbreviation||t?.team?.shortDisplayName||"--"}
       function nflTeamRecord(t){const records=t?.records||[];const overall=records.find(r=>r.type==="total"||r.name==="overall"||r.abbreviation==="Total");return overall?.summary||records[0]?.summary||""}
-      function nflGameCard(g){const a=nflTeamLabel(g.away),h=nflTeamLabel(g.home),ar=nflTeamRecord(g.away),hr=nflTeamRecord(g.home),as=g.away?.score??"0",hs=g.home?.score??"0",live=g.state==="in",final=g.state==="post",scheduled=`${a}${ar?` ${ar}`:""} @ ${h}${hr?` ${hr}`:""}`,matchup=live||final?`${a} ${as} @ ${h} ${hs}`:scheduled,status=final?"FINAL":live?(g.detail||"LIVE"):`${formatters.nfl.format(g.date).replace(",","")} CT`;return `<div class="nfl-game${g.bears?" bears":""}${live?" live":""}"><span class="nfl-matchup">${escapeHtml(matchup)}</span><span class="nfl-status">${escapeHtml(status)}</span></div>`}
+      function nflGameCard(g){const a=nflTeamLabel(g.away),h=nflTeamLabel(g.home),ar=nflTeamRecord(g.away),hr=nflTeamRecord(g.home),as=g.away?.score??"0",hs=g.home?.score??"0",live=g.state==="in",final=g.state==="post",scheduled=`${escapeHtml(a)}${ar?` <span class="nfl-record">${escapeHtml(ar)}</span>`:""} @ ${escapeHtml(h)}${hr?` <span class="nfl-record">${escapeHtml(hr)}</span>`:""}`,matchup=live||final?`${escapeHtml(a)} ${escapeHtml(as)} @ ${escapeHtml(h)} ${escapeHtml(hs)}`:scheduled,status=final?"FINAL":live?(g.detail||"LIVE"):`${formatters.nfl.format(g.date).replace(",","")} CT`;return `<div class="nfl-game${g.bears?" bears":""}${live?" live":""}"><span class="nfl-matchup">${matchup}</span><span class="nfl-status">${escapeHtml(status)}</span></div>`}
       function renderNflGames(games){els.nflTicker.innerHTML=games.slice(0,16).map(nflGameCard).join("")}
       async function loadNfl(){try{const data=await getJson(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?_=${Date.now()}`),games=(data.events||[]).map(nflGameInfo).filter(g=>g.away&&g.home).sort((a,b)=>a.date-b.date);if(!games.length)throw new Error("No NFL games returned");renderNflGames(games)}catch(e){console.error("NFL scoreboard",e);els.nflTicker.innerHTML='<span class="nfl-loading">NFL scoreboard unavailable · retrying automatically</span>'}}
       function tileCoordinate({lat,lon,zoom}){const lr=lat*Math.PI/180,s=2**zoom;return{x:(lon+180)/360*s,y:(1-Math.log(Math.tan(lr)+1/Math.cos(lr))/Math.PI)/2*s}}
